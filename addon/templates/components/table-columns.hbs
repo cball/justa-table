@@ -1,0 +1,34 @@
+<table class="table">
+  <thead>
+    <tr class={{rowClasses}}>
+      {{#each columnComponents as |column|}}
+        {{!-- {{component column.headerComponent column=column}} --}}
+        <th>{{column.headerName}}</th>
+      {{/each}}
+    </tr>
+  </thead>
+
+  <tbody>
+    {{! TODO: render diff template instead of this if }}
+    {{#if composableParent.collapsableRowGroups}}
+      {{!-- {{#each composableParent.collapsableRowGroups as |rowGroup|}}
+        <tr class="collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
+          <td colspan={{columns.length}} class="table-cell">
+            {{rowGroup.label}}
+          </td>
+        </tr>
+        {{#each (get composableParent.content rowGroup) as |childRow|}}
+          <tr class="{{if rowGroup.isCollapsed 'is-collapsed'}}">
+            {{yield row}}
+          </tr>
+        {{/each}}
+      {{/each}} --}}
+    {{else}}
+      {{#each composableParent.content as |row|}}
+        <tr>
+          {{yield row}}
+        </tr>
+      {{/each}}
+    {{/if}}
+  </tbody>
+</table>

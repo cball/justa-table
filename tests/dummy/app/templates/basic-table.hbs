@@ -1,0 +1,23 @@
+<h3>Basic Table</h3>
+
+{{#justa-table content=model}}
+
+  {{!--
+    TODO: Ideally remove need for table-columns or
+    fixed-table-columns (pass fixed=true to column component)
+  --}}
+  {{#table-columns as |row|}}
+
+    {{table-column
+      width='90px'
+      useFakeRowspan=true
+      headerName='Name'
+      row=row
+      valueBindingPath='displayName'}}
+
+    {{#table-column headerName='Image'}}
+      <img src={{row.image}} style="max-height: 32px;" />
+    {{/table-column}}
+
+  {{/table-columns}}
+{{/justa-table}}

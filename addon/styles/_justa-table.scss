@@ -1,0 +1,112 @@
+.justa-table {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  // TODO: only need if forced fixed height
+  //height: 700px;
+  //overflow: auto;
+  margin-bottom: 1em;
+
+  tr {
+    height: 36px;
+  }
+
+  tr:hover {
+    background: #e9f7f7;
+  }
+
+  th, td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    table-layout: fixed;
+
+    &.right {
+      text-align: right;
+    }
+  }
+
+  table {
+    float: left;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .table-columns {
+    overflow: auto;
+  }
+
+  th {
+    border-right: 1px solid #666;
+  }
+
+  /* TODO: pass row height in table setup when cloaking? */
+  td {
+    // height: 32px;
+    padding: 7px 10px;
+    line-height: 16px;
+    border-right: 1px solid #e5e5e5;
+    background: none !important; // TODO: override bootstrap > style
+  }
+
+  .fixed-table-columns {
+    table {
+      // we have to set this to something, choose default 1 column width.
+      // expected that fixed columns have set widths which will override this
+      width: 100px;
+    }
+
+    tr:hover {
+      background: none;
+    }
+
+    td, td:hover {
+      background: rgb(245, 245, 245) !important;
+    }
+  }
+
+  .fake-rowspan {
+    td {
+      border-top: none;
+    }
+  }
+
+  td.fake-rowspan {
+    border-top: none;
+    background: #fff !important;
+  }
+
+  .last-row-in-group {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .cell-not-selected {
+    span {
+      color: #999;
+      font-weight: bold;
+      display: none;
+      white-space: nowrap;
+      font-size: 10px;
+      margin-top: 1px;
+    }
+  }
+
+  td:hover {
+    .cell-not-selected {
+      span {
+        display: block;
+      }
+    }
+  }
+
+  .infinity-loader {
+    table {
+      position: absolute;
+      bottom: -19px;
+      left: 0px;
+      border-left: 1px solid #e5d5d5;
+      text-align: center;
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,1 @@
+export { default } from 'justa-table/components/justa-table';

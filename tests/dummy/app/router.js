@@ -6,6 +6,10 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('basic-table');
+  this.route('fixed-column-table');
+  this.route('infinite-loader-table');
+  this.route('collapsable-table');
 });
 
 export default Router;
