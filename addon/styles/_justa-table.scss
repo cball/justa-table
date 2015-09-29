@@ -111,4 +111,12 @@
       width: 100%;
     }
   }
+
+  .is-collapsed {
+    display: none;
+  }
+
+  .collapsable.is-collapsed {
+    display: table-row;
+  }
 }

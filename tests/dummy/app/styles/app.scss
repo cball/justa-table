@@ -8,3 +8,15 @@
 	0% {background-color: #802456}
 	50% {background-color: #554339}
 }
+
+.collapsable {
+  background: #aaa;
+
+  & td:before {
+    content: '👇';
+  }
+
+  &.is-collapsed td:before {
+    content: '👉';
+  }
+}

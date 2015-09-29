@@ -1,6 +1,6 @@
 <table class="table">
   <thead>
-    <tr class={{rowClasses}}>
+    <tr>
       {{#each columns as |column|}}
         {{component column.headerComponent column=column}}
       {{/each}}
@@ -9,22 +9,22 @@
 
   <tbody>
     {{! TODO: render diff template instead of this if }}
-    {{#if table.collapsableRowGroups}}
-      {{#each table.collapsableRowGroups as |rowGroup|}}
-        <tr class="collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
+    {{#if table.collapsable}}
+      {{#each table.content as |rowGroup|}}
+        <tr class="{{rowClasses}} collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
           <td colspan={{columns.length}} class="table-cell">
             {{rowGroup.label}}
           </td>
         </tr>
-        {{#each (get table.content rowGroup) as |childRow|}}
+        {{#each rowGroup.data as |childRow|}}
           <tr class="{{if rowGroup.isCollapsed 'is-collapsed'}}">
-            {{yield row}}
+            {{yield childRow}}
           </tr>
         {{/each}}
       {{/each}}
     {{else}}
-      {{#each composableParent.content as |row|}}
-        <tr>
+      {{#each table.content as |row|}}
+        <tr class={{rowClasses}}>
           {{yield row}}
         </tr>
       {{/each}}

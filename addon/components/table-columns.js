@@ -19,5 +19,11 @@ export default Ember.Component.extend(ParentComponentSupport, ChildComponentSupp
 
   columns: computed('composableChildren', function() {
     return new A(this.get('composableChildren'));
-  }).readOnly()
+  }).readOnly(),
+
+  actions: {
+    toggleRowCollapse(rowGroup) {
+      Ember.set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+    }
+  }
 });
