@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import ChildComponentSupport from 'ember-composability/mixins/child-component-support';
 import TableColumns from './table-columns';
+import FixedColumns from './fixed-table-columns';
 import layout from '../templates/components/table-column';
 
 const { computed, get, isEmpty } = Ember;
@@ -8,7 +9,7 @@ const { computed, get, isEmpty } = Ember;
 export default Ember.Component.extend(ChildComponentSupport, {
   layout: layout,
   tagName: 'td',
-  _parentComponentTypes: [TableColumns],
+  _parentComponentTypes: [TableColumns, FixedColumns],
 
   init() {
     this._super(...arguments);

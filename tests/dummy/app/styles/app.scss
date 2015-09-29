@@ -1,0 +1,10 @@
+.danger-cell {
+  animation: blink 1s step-end infinite;
+  background: #333;
+  color: white;
+}
+
+@keyframes blink {
+	0% {background-color: #802456}
+	50% {background-color: #554339}
+}

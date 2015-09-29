@@ -2,6 +2,8 @@
   position: relative;
   display: inline-block;
   width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
   // TODO: only need if forced fixed height
   //height: 700px;
   //overflow: auto;

@@ -1,0 +1,59 @@
+<h3>Fixed Column Table</h3>
+
+{{#justa-table content=model}}
+  {{#fixed-table-columns as |row|}}
+    {{table-column
+      row=row
+      width=150
+      headerName='Name'
+      valueBindingPath='displayName'}}
+  {{/fixed-table-columns}}
+
+  {{#table-columns as |row|}}
+
+    {{!--
+      NOTE: there is a limitation currently when using fixed columns.
+      you must specify a width for each standard column so that the browser doesn't autosize everything
+    --}}
+
+    {{table-column
+      row=row
+      width=250
+      headerName='Company'
+      valueBindingPath='company'}}
+
+    {{table-column
+      row=row
+      width=550
+      headerName='Address'
+      valueBindingPath='address'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='City'
+      valueBindingPath='city'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='State'
+      valueBindingPath='state'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='Zip'
+      valueBindingPath='zipCode'}}
+
+    {{#table-column
+      width=150
+      headerName='Be Careful?'
+      classNames=(if row.flagged 'danger-cell')}}
+
+      {{#if row.flagged}}
+        WARNING!
+      {{/if}}
+    {{/table-column}}
+  {{/table-columns}}
+{{/justa-table}}

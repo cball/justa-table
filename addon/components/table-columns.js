@@ -9,9 +9,13 @@ const { A, computed } = Ember;
 
 export default Ember.Component.extend(ParentComponentSupport, ChildComponentSupport, {
   layout: layout,
-  classNames: ['table-columns'],
   _parentComponentTypes: [Table],
   table: readOnly('composableParent'),
+
+  init() {
+    this._super(...arguments);
+    this.classNames = ['table-columns'];
+  },
 
   columns: computed('composableChildren', function() {
     return new A(this.get('composableChildren'));
