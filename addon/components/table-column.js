@@ -3,14 +3,38 @@ import ChildComponentSupport from 'ember-composability/mixins/child-component-su
 import TableColumns from './table-columns';
 import layout from '../templates/components/table-column';
 
+const { computed, get, isEmpty } = Ember;
+
 export default Ember.Component.extend(ChildComponentSupport, {
   layout: layout,
   tagName: 'td',
-  headerComponent: 'basic-header',
   _parentComponentTypes: [TableColumns],
 
   init() {
     this._super(...arguments);
-    console.log('what the')
+    this.headerComponent = 'basic-header';
+    this.useFakeRowspan = this.useFakeRowspan || false;
+    this.resizable = this.resizable || false;
+  },
+
+  _value: computed('valueBindingPath', 'row', function() {
+    const path = this.get('valueBindingPath');
+    const hasBlockParams = this.get('hasBlockParams');
+
+    if (hasBlockParams || isEmpty(path)) {
+      return null;
+    }
+
+    return get(this.get('row'), path);
+  }),
+
+  shouldRegisterToParent(parentComponent) {
+    const childComponents = parentComponent.getComposableChildren();
+    if (Ember.isEmpty(childComponents)) {
+      return true;
+    } else {
+      const child = childComponents.findBy('headerName', this.get('headerName'));
+      return Ember.isNone(child);
+    }
   }
 });

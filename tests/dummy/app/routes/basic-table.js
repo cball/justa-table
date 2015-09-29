@@ -14,5 +14,11 @@ export default Ember.Route.extend({
     }
 
     return users;
+  },
+
+  actions: {
+    imageClicked(user) {
+      alert(`${user.get('displayName')}'s image clicked.`);
+    }
   }
 });

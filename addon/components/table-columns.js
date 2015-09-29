@@ -11,18 +11,9 @@ export default Ember.Component.extend(ParentComponentSupport, ChildComponentSupp
   layout: layout,
   classNames: ['table-columns'],
   _parentComponentTypes: [Table],
+  table: readOnly('composableParent'),
 
-  // columnComponents: computed('composableChildren', function() {
-  //   return new A(this.get('composableChildren'));
-  // }).readOnly(),
-  //
-  // registerChildComponent(childComponent) {
-  //   this.get('_childComponents').add(childComponent, Ember.guidFor(childComponent));
-  //   this._notifyComposableChildrenChanged();
-  // },
-  //
-  // unregisterChildComponent(childComponent) {
-  //   this.get('_childComponents').delete(childComponent, Ember.guidFor(childComponent));
-  //   this._notifyComposableChildrenChanged();
-  // }
+  columns: computed('composableChildren', function() {
+    return new A(this.get('composableChildren'));
+  }).readOnly()
 });
