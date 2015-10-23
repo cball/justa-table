@@ -10,6 +10,7 @@ Router.map(function() {
   this.route('fixed-column-table');
   this.route('infinite-loader-table');
   this.route('collapsable-table');
+  this.route('collapsable-table-with-ajax');
 });
 
 export default Router;

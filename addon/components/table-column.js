@@ -20,13 +20,14 @@ export default Ember.Component.extend(ChildComponentSupport, {
 
   _value: computed('valueBindingPath', 'row', function() {
     const path = this.get('valueBindingPath');
+    const row = this.get('row');
     const hasBlockParams = this.get('hasBlockParams');
 
-    if (hasBlockParams || isEmpty(path)) {
+    if (hasBlockParams || isEmpty(path) || isEmpty(row)) {
       return null;
     }
 
-    return get(this.get('row'), path);
+    return get(row, path);
   }),
 
   shouldRegisterToParent(parentComponent) {

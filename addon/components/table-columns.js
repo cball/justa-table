@@ -5,7 +5,12 @@ import Table from './justa-table';
 import layout from '../templates/components/table-columns';
 
 const { readOnly } = Ember.computed;
-const { A, computed } = Ember;
+const {
+  A,
+  computed,
+  set,
+  isEmpty
+} = Ember;
 
 export default Ember.Component.extend(ParentComponentSupport, ChildComponentSupport, {
   layout: layout,
@@ -23,7 +28,19 @@ export default Ember.Component.extend(ParentComponentSupport, ChildComponentSupp
 
   actions: {
     toggleRowCollapse(rowGroup) {
-      Ember.set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+      set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+
+      // TODO make this smarter by taking option if we should do this
+      let shouldFetch = isEmpty(rowGroup.data) && !rowGroup.isCollapsed;
+
+      if (shouldFetch) {
+        set(rowGroup, 'loading', true);
+        this.attrs.onRowExpand(rowGroup).then(data => {
+          rowGroup.data = rowGroup.data.concat(data);
+        }).finally(() => {
+          set(rowGroup, 'loading', false);
+        });
+      }
     }
   }
 });
