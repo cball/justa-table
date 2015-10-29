@@ -1,18 +1,5 @@
 import Ember from 'ember';
-
-export default Ember.Controller.extend({
-  actions: {
-    onRowExpand(rowGroup) {
-      let promise = new Ember.RSVP.Promise((resolve) => {
-        Ember.run.later(this, function() {
-          resolve(fakeUsers(10));
-        }, 2000);
-      });
-
-      return promise;
-    }
-  }
-});
+import faker from 'faker';
 
 let fakeUsers = function(number=10) {
   let users = [];
@@ -33,3 +20,17 @@ let fakeUsers = function(number=10) {
 
   return users;
 };
+
+export default Ember.Controller.extend({
+  actions: {
+    onRowExpand(/*rowGroup*/) {
+      let promise = new Ember.RSVP.Promise((resolve) => {
+        Ember.run.later(this, function() {
+          resolve(fakeUsers(10));
+        }, 2000);
+      });
+
+      return promise;
+    }
+  }
+});

@@ -1,11 +1,10 @@
 import Ember from 'ember';
-import ParentComponentSupport from 'ember-composability/mixins/parent-component-support';
 import layout from '../templates/components/justa-table';
 
 const { later } = Ember.run;
 const { empty } = Ember.computed;
 
-export default Ember.Component.extend(ParentComponentSupport, {
+export default Ember.Component.extend({
   layout: layout,
   classNames: ['justa-table'],
   noContent: empty('content'),

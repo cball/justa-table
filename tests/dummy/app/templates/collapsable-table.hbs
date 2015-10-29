@@ -2,8 +2,8 @@
 
 <a href="#" {{action 'toggleExpandAll'}}>Toggle Expand All</a>
 
-{{#justa-table content=model collapsable=true}}
-  {{#table-columns as |row|}}
+{{#justa-table content=model collapsable=true as |table|}}
+  {{#table-columns table=table as |row|}}
 
     {{table-column
       row=row

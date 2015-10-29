@@ -3,7 +3,7 @@
 <a href="#" {{action 'toggleExpandAll'}}>Toggle Expand All</a>
 
 {{#justa-table content=model collapsable=true as |table|}}
-  {{#table-columns onRowExpand=(action 'onRowExpand') as |row|}}
+  {{#table-columns table=table onRowExpand=(action 'onRowExpand') as |row|}}
 
     {{table-column
       row=row
