@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import layout from '../templates/components/table-columns';
 import TableColumns from './table-columns';
 

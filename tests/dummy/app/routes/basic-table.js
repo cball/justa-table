@@ -18,7 +18,7 @@ export default Ember.Route.extend({
 
   actions: {
     imageClicked(user) {
-      alert(`${user.get('displayName')}'s image clicked.`);
+      console.log(`${user.get('displayName')}'s image clicked.`);
     }
   }
 });

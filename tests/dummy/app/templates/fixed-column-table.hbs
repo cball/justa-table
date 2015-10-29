@@ -1,7 +1,7 @@
 <h3>Fixed Column Table</h3>
 
-{{#justa-table content=model}}
-  {{#fixed-table-columns as |row|}}
+{{#justa-table content=model as |table|}}
+  {{#fixed-table-columns table=table as |row|}}
     {{table-column
       row=row
       width=150
@@ -9,7 +9,7 @@
       valueBindingPath='displayName'}}
   {{/fixed-table-columns}}
 
-  {{#table-columns as |row|}}
+  {{#table-columns table=table as |row|}}
 
     {{!--
       NOTE: there is a limitation currently when using fixed columns.

@@ -1,11 +1,11 @@
 <h3>Basic Table</h3>
 
-{{#justa-table content=model}}
-  {{#table-columns as |row|}}
+{{#justa-table content=model as |table|}}
+  {{#table-columns table=table as |row|}}
 
     {{table-column
       row=row
-      width=90
+      width=190
       headerName='Name'
       valueBindingPath='displayName'}}
 
