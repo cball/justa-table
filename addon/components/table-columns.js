@@ -25,6 +25,11 @@ export default Ember.Component.extend({
     }
   },
 
+  unregisterColumn(column) {
+    let columns = this.get('columns');
+    columns.removeObject(column);
+  },
+
   actions: {
     toggleRowCollapse(rowGroup) {
       set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
