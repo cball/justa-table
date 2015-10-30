@@ -29,6 +29,10 @@ export default Ember.Component.extend({
   }),
 
   _registerWithParent() {
-    this.parentView.registerColumn(this);
+    this.get('parentView').registerColumn(this);
+  },
+
+  willDestroyElement() {
+    this.get('parentView').unregisterColumn(this);
   }
 });
