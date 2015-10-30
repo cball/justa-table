@@ -24,7 +24,7 @@ export default Ember.Route.extend({
     userGroups.forEach((group) => {
       let users = [];
 
-      for (let i=0; i<10; i++) {
+      for (let i = 0; i < 10; i++) {
         let user = Ember.Object.create({
           displayName: faker.name.findName(),
           address: faker.address.streetAddress(),

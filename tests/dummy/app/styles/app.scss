@@ -1,3 +1,19 @@
+$icon-font-path: '/assets/bootstrap/';
+@import "bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+
+@import "addon/styles/addon";
+
+.panel-nav-tabs {
+  .panel-heading {
+    padding: 0;
+    border-bottom: none;
+
+    ul.nav-tabs {
+      padding: 10px 15px 0;
+    }
+  }
+}
+
 .danger-cell {
   animation: blink 1s step-end infinite;
   background: #333;

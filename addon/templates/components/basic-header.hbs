@@ -1,1 +1,4 @@
 {{column.headerName}}
+{{#if resizable}}
+  {{column-resize-handle column=column onColumnWidthChange=(action 'onColumnWidthChange')}}
+{{/if}}
