@@ -2,7 +2,7 @@
   <thead>
     <tr>
       {{#each columns as |column|}}
-        {{component column.headerComponent column=column}}
+        {{component column.headerComponent column=column onColumnWidthChange=(action 'columnWidthChanged')}}
       {{/each}}
     </tr>
   </thead>

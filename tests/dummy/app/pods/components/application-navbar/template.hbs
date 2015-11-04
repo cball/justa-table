@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    {{#link-to 'index' class="navbar-brand"}}Ember Justa Table{{/link-to}}
+  </div>
+  <div id="navbar" class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      {{#active-link}}
+        {{#link-to 'index'}}Readme{{/link-to}}
+      {{/active-link}}
+      {{#active-link class="dropdown"}}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Examples <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {{examples-navbar}}
+        </ul>
+      {{/active-link}}
+    </ul>
+  </div>
+</div>

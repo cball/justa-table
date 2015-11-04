@@ -1,5 +1,3 @@
-<h3>Fixed Column Table</h3>
-
 {{#justa-table content=model as |table|}}
   {{#fixed-table-columns table=table as |row|}}
     {{table-column
@@ -7,6 +5,12 @@
       width=150
       headerName='Name'
       valueBindingPath='displayName'}}
+
+    {{table-column
+      row=row
+      width=250
+      headerName='Company'
+      valueBindingPath='company'}}
   {{/fixed-table-columns}}
 
   {{#table-columns table=table as |row|}}
@@ -15,12 +19,6 @@
       NOTE: there is a limitation currently when using fixed columns.
       you must specify a width for each standard column so that the browser doesn't autosize everything
     --}}
-
-    {{table-column
-      row=row
-      width=250
-      headerName='Company'
-      valueBindingPath='company'}}
 
     {{table-column
       row=row

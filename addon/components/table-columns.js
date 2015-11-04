@@ -8,11 +8,14 @@ const {
 } = Ember;
 
 export default Ember.Component.extend({
-  layout: layout,
+  layout,
+  classNames: ['table-columns'],
+
+  columns: null,
+  table: null,
 
   init() {
     this._super(...arguments);
-    this.classNames = ['table-columns'];
     this.columns = new A();
   },
 
@@ -39,12 +42,16 @@ export default Ember.Component.extend({
 
       if (shouldFetch) {
         set(rowGroup, 'loading', true);
-        this.attrs.onRowExpand(rowGroup).then(data => {
+        this.attrs.onRowExpand(rowGroup).then((data) => {
           rowGroup.data = rowGroup.data.concat(data);
         }).finally(() => {
           set(rowGroup, 'loading', false);
         });
       }
+    },
+
+    columnWidthChanged(/* column, newWidth */) {
+      // no-op
     }
   }
 });

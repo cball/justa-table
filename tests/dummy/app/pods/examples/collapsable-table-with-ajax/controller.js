@@ -4,7 +4,7 @@ import faker from 'faker';
 let fakeUsers = function(number=10) {
   let users = [];
 
-  for (let i=0; i<number; i++) {
+  for (let i = 0; i < number; i++) {
     let user = Ember.Object.create({
       displayName: faker.name.findName(),
       address: faker.address.streetAddress(),
