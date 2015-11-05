@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/cball/justa-table.png?label=ready&title=Ready)](https://waffle.io/cball/justa-table)
 # Ember Justa Table [![Build Status](https://travis-ci.org/cball/justa-table.svg?branch=master)](https://travis-ci.org/cball/justa-table)
 
 This README outlines the details of collaborating on this Ember addon.
