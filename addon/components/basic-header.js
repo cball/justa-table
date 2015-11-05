@@ -6,6 +6,9 @@ const { computed } = Ember;
 export default Ember.Component.extend({
   layout,
   tagName: 'th',
+  classNameBindings: ['alignCenter:center', 'alignRight:right'],
+  alignCenter: computed.equal('column.align', 'center'),
+  alignRight: computed.equal('column.align', 'right'),
 
   column: null,
   resizable: computed.readOnly('column.resizable'),

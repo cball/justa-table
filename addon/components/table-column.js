@@ -11,12 +11,45 @@ const {
 export default Ember.Component.extend({
   layout,
   tagName: 'td',
+  classNameBindings: ['alignCenter:center', 'alignRight:right'],
+  alignCenter: computed.equal('align', 'center'),
+  alignRight: computed.equal('align', 'right'),
 
+  /**
+    The header component this column should use to render its header.
+    @public
+  */
   headerComponent: 'basic-header',
+
+  /**
+    The width of this column in pixels.
+    @public
+  */
   width: 0,
+
+  /**
+    The minimum width this column can be. Only used when resize is true.
+    @public
+  */
   minWidth: 0,
-  useFakeRowspan: false,
+
+  /**
+    If the table column is resizable.
+    @public
+  */
   resizable: false,
+
+  /**
+    If a fake rowspan class should be added when the cell value is empty.
+    @public
+  */
+  useFakeRowspan: false,
+
+  /**
+    The registered parent wrapper of this column (TableColumns or FixedTableColumns).
+    @private
+  */
+  _registeredParent: null,
 
   init() {
     this._super(...arguments);
@@ -24,6 +57,11 @@ export default Ember.Component.extend({
     run.scheduleOnce('actions', this, this._registerWithParent);
   },
 
+  /**
+    Return the value for the cell based on row.valueBindingPath. Only used if
+    a block is not passed, the path is provided, and the row is not empty.
+    @private
+  */
   _value: computed('valueBindingPath', 'row', function() {
     const path = this.get('valueBindingPath');
     const row = this.get('row');
@@ -36,11 +74,20 @@ export default Ember.Component.extend({
     return get(row, path);
   }),
 
+  /**
+    Register this column with its parent view.
+    @private
+  */
   _registerWithParent() {
-    this.get('parentView').registerColumn(this);
+    let parent = this.get('parentView');
+    parent.registerColumn(this);
+    this.set('_registeredParent', parent);
   },
 
   willDestroyElement() {
-    this.get('parentView').unregisterColumn(this);
+    let parent = this.get('_registeredParent');
+    if (parent) {
+      parent.unregisterColumn(this);
+    }
   }
 });

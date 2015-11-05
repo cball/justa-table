@@ -7,7 +7,9 @@ export default Ember.Route.extend({
     for (let i = 0; i < 50; i++) {
       let user = Ember.Object.create({
         displayName: faker.name.findName(),
-        image: faker.image.avatar()
+        image: faker.image.avatar(),
+        one: faker.company.catchPhrase(),
+        two: faker.company.bsBuzz()
       });
 
       users.push(user);
@@ -19,6 +21,11 @@ export default Ember.Route.extend({
   actions: {
     imageClicked(user) {
       console.log(`${user.get('displayName')}'s image clicked.`);
+    },
+
+    removeSomeRows() {
+      let users = this.get('controller.model');
+      Ember.set(this, 'controller.model', users.slice(5, 50));
     }
   }
 });
