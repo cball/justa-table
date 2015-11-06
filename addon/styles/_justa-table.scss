@@ -24,6 +24,10 @@
     overflow: hidden;
     table-layout: fixed;
 
+    &.center {
+      text-align: center;
+    }
+
     &.right {
       text-align: right;
     }

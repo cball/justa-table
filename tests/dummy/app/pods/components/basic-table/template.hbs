@@ -1,0 +1,31 @@
+<a href="#" class="btn btn-default" {{action 'removeSomeRows'}}>- Remove some rows</a>
+<a href="#" class="btn btn-default" {{action 'insertSomeColumns'}}>+ Insert some columns</a>
+<a href="#" class="btn btn-default" {{action 'removeAColumn'}}>- Remove a dynamic column</a>
+<br>
+
+{{#justa-table content=content as |table|}}
+  {{#table-columns table=table as |row|}}
+
+    {{table-column
+      row=row
+      width=190
+      headerName='Name'
+      valueBindingPath='displayName'}}
+
+    {{#table-column headerName='Image'}}
+      <a href="#">
+        <img src={{row.image}} height="32" {{action 'imageClicked' row}} />
+      </a>
+    {{/table-column}}
+
+    {{#each dynamicColumns as |dynamicColumn index|}}
+      {{table-column
+        row=row
+        index=index
+        width=dynamicColumn.width
+        headerName=dynamicColumn.label
+        valueBindingPath=dynamicColumn.value}}
+    {{/each}}
+
+  {{/table-columns}}
+{{/justa-table}}

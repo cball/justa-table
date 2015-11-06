@@ -19,5 +19,12 @@ export default Ember.Route.extend({
     }
 
     return users;
+  },
+
+  actions: {
+    removeSomeRows() {
+      let users = this.get('controller.model');
+      Ember.set(this, 'controller.model', users.slice(5, 50));
+    }
   }
 });
