@@ -56,3 +56,23 @@ test('basic table properly re-renders when columns are removed', function(assert
     assert.equal(firstRowCellCount, 3);
   });
 });
+
+test('basic table properly re-renders when columns are inserted', function(assert) {
+  visit('/examples/basic-table');
+
+  andThen(() => {
+    assert.deepEqual(headerNames(), ['Name', 'Image', 'Dynamic 1', 'Dynamic 2']);
+  });
+
+  click('a:contains(Insert some columns)');
+
+  andThen(() => {
+    assert.deepEqual(headerNames(), ['Name', 'Image', 'Dynamic 1', 'New Dynamic 1', 'Dynamic 2', 'New Dynamic 2']);
+  });
+});
+
+function headerNames() {
+  return $('.table-columns th').map(function() {
+    return $(this).text().trim();
+  }).toArray();
+}

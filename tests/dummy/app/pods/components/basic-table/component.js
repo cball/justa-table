@@ -29,6 +29,24 @@ export default Ember.Component.extend({
 
     removeSomeRows() {
       this.sendAction('removeSomeRows');
+    },
+
+    insertSomeColumns() {
+      let newColumns = new Ember.A();
+      let columns = this.get('dynamicColumns');
+
+      columns.forEach((c) => {
+        let newColumn = {
+          label: `New ${c.label}`,
+          value: c.value,
+          width: 200
+        };
+
+        newColumns.addObject(c);
+        newColumns.addObject(newColumn);
+      });
+
+      this.set('dynamicColumns', newColumns);
     }
   }
 });

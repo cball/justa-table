@@ -1,4 +1,5 @@
 <a href="#" class="btn btn-default" {{action 'removeSomeRows'}}>- Remove some rows</a>
+<a href="#" class="btn btn-default" {{action 'insertSomeColumns'}}>+ Insert some columns</a>
 <a href="#" class="btn btn-default" {{action 'removeAColumn'}}>- Remove a dynamic column</a>
 <br>
 
@@ -17,9 +18,10 @@
       </a>
     {{/table-column}}
 
-    {{#each dynamicColumns as |dynamicColumn|}}
+    {{#each dynamicColumns as |dynamicColumn index|}}
       {{table-column
         row=row
+        index=index
         width=dynamicColumn.width
         headerName=dynamicColumn.label
         valueBindingPath=dynamicColumn.value}}
