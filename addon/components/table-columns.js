@@ -24,10 +24,40 @@ export default Ember.Component.extend({
   */
   _allColumns: null,
 
+  /**
+    Css classes to apply to table rows.
+    @public
+  */
+  rowClasses: null,
+
   init() {
     this._super(...arguments);
     this._allColumns = new A();
   },
+
+  /**
+    Merged css classes to apply to table rows. Merges table.rowClasses and rowClasses.
+    @public
+  */
+  mergedRowClasses: computed('table.rowClasses', 'rowClasses', function() {
+    let tableClasses = this.get('table.rowClasses');
+    let rowClasses = this.get('rowClasses');
+    return new A([tableClasses, rowClasses]).compact().join(' ');
+  }),
+
+  /**
+    Sets an inline style for height on all table rows from table.rowHeight.
+    @public
+  */
+  rowHeight: computed('table.rowHeight', function() {
+    let rowHeight = this.get('table.rowHeight');
+
+    if (rowHeight) {
+      return new Ember.Handlebars.SafeString(`height: ${rowHeight}`);
+    }
+
+    return new Ember.Handlebars.SafeString('');
+  }),
 
   /**
     Keeps track of all unique columns. Used to render the th's of the table.
@@ -56,16 +86,7 @@ export default Ember.Component.extend({
   registerColumn(column) {
     let columns = this.get('_allColumns');
     column.index = column.index || -1;
-    // let existingColumn = columns.findBy('headerName', column.get('headerName'));
-    // let oldIndex = columns.indexOf(existingColumn);
-    // let newIndex = column.getWithDefault('index', -1);
-
-    // if (existingColumn && newIndex > -1 && oldIndex !== newIndex) {
-    //   columns.splice(oldIndex, 1);
-    //   columns.splice(newIndex, 0, column);
-    // } else {
     columns.addObject(column);
-    // }
   },
 
   /**

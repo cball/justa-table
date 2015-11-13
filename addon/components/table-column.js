@@ -11,7 +11,7 @@ const {
 export default Ember.Component.extend({
   layout,
   tagName: 'td',
-  classNameBindings: ['alignCenter:center', 'alignRight:right'],
+  classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
 
@@ -44,6 +44,12 @@ export default Ember.Component.extend({
     @public
   */
   useFakeRowspan: false,
+
+  shouldUseFakeRowspan: computed('useFakeRowspan', '_value', function() {
+    let value = this.get('_value');
+    let useFakeRowspan = this.get('useFakeRowspan');
+    return useFakeRowspan && isEmpty(value);
+  }),
 
   /**
     The registered parent wrapper of this column (TableColumns or FixedTableColumns).
