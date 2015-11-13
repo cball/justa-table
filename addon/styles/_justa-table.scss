@@ -8,6 +8,7 @@
   //height: 700px;
   //overflow: auto;
   margin-bottom: 1em;
+  border: 1px solid #e5e5e5;
 
   tr {
     height: 36px;
@@ -68,7 +69,7 @@
     }
 
     td, td:hover {
-      background: rgb(245, 245, 245) !important;
+      background: rgb(245, 245, 245);
     }
   }
 
@@ -79,8 +80,8 @@
   }
 
   td.fake-rowspan {
-    border-top: none;
-    background: #fff !important;
+    border-top: 1px solid #fff;
+    background: #fff;
   }
 
   .last-row-in-group {

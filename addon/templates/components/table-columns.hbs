@@ -1,5 +1,26 @@
 <table class="table">
+  {{!--
+    define colgroups here. example for 2 grouped header columns
+    <colgroup span="2"></colgroup>
+    <colgroup span="2"></colgroup>
+  --}}
   <thead>
+    {{!--
+      For grouped:
+      <tr>
+        <th colspan="2" scope="colgroup">Mars</th>
+        <th colspan="2" scope="colgroup">Venus</th>
+      </tr>
+
+      <tr>
+        <th scope="col">Produced</th>
+        <th scope="col">Sold</th>
+        <th scope="col">Produced</th>
+        <th scope="col">Sold</th>
+      </tr>
+
+      http://www.w3.org/WAI/tutorials/tables/irregular/
+    --}}
     <tr>
       {{#each columns as |column|}}
         {{component column.headerComponent column=column onColumnWidthChange=(action 'columnWidthChanged')}}
@@ -11,7 +32,7 @@
     {{! TODO: render diff template instead of this if }}
     {{#if table.collapsable}}
       {{#each table.content as |rowGroup|}}
-        <tr class="{{rowClasses}} collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
+        <tr class="{{mergedRowClasses}} collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
           <td colspan={{columns.length}} class="table-cell">
             {{rowGroup.label}}
           </td>
@@ -34,7 +55,7 @@
       {{/each}}
     {{else}}
       {{#each table.content as |row|}}
-        <tr class={{rowClasses}}>
+        <tr class={{mergedRowClasses}} style={{rowHeight}}>
           {{yield row}}
         </tr>
       {{/each}}
