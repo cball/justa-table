@@ -61,6 +61,20 @@ export default Ember.Component.extend({
     this._super(...arguments);
     Ember.assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
     run.scheduleOnce('actions', this, this._registerWithParent);
+
+    this._setValueDependentKeys();
+  },
+
+  /**
+    Sets dependent keys on the _value computed property. This is done since
+    we need to clear the cached version based on a dynamic key, and volatile()
+    does not do the needful.
+    @private
+  **/
+  _setValueDependentKeys() {
+    const path = this.get('valueBindingPath');
+    const pathKey = `row.${path}`;
+    this._value.property('valueBindingPath', 'row', pathKey);
   },
 
   /**
