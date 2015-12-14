@@ -18,6 +18,7 @@ export default Ember.Component.extend({
   /**
     The header component this column should use to render its header.
     @public
+    @default 'basic-header'
   */
   headerComponent: 'basic-header',
 
@@ -36,12 +37,14 @@ export default Ember.Component.extend({
   /**
     If the table column is resizable.
     @public
+    @default false
   */
   resizable: false,
 
   /**
     If a fake rowspan class should be added when the cell value is empty.
     @public
+    @default false
   */
   useFakeRowspan: false,
 

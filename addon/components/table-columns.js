@@ -3,8 +3,10 @@ import layout from '../templates/components/table-columns';
 
 const {
   A,
+  get,
   set,
   isEmpty,
+  isNone,
   computed
 } = Ember;
 
@@ -100,10 +102,35 @@ export default Ember.Component.extend({
     allColumns.removeObject(column);
   },
 
+  didInsertElement() {
+    this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
+    this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
+  },
+
+  willDestroyElement() {
+    this.$().off('mouseenter', 'tr', this._onRowEnter.bind(this));
+    this.$().off('mouseleave', 'tr', this._onRowLeave.bind(this));
+  },
+
+  _onRowEnter() {
+    let rowIndex = this.$('tr').index(this.$('tr:hover'));
+    this.getAttr('table').$(`tr.table-row:nth-child(${rowIndex})`).addClass('hover');
+  },
+
+  _onRowLeave() {
+    this.getAttr('table').$('tr').removeClass('hover');
+  },
+
   actions: {
     // TODO: move to collapse table
     toggleRowCollapse(rowGroup) {
-      set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+      let collapsed = get(rowGroup, 'isCollapsed');
+
+      if (isNone(collapsed)) {
+        set(rowGroup, 'isCollapsed', false);
+      } else {
+        set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+      }
 
       // TODO make this smarter by taking option if we should do this
       let shouldFetch = isEmpty(rowGroup.data) && !rowGroup.isCollapsed;
@@ -111,7 +138,7 @@ export default Ember.Component.extend({
       if (shouldFetch) {
         set(rowGroup, 'loading', true);
         this.attrs.onRowExpand(rowGroup).then((data) => {
-          rowGroup.data = rowGroup.data.concat(data);
+          set(rowGroup, 'data', rowGroup.data.concat(data));
         }).finally(() => {
           set(rowGroup, 'loading', false);
         });

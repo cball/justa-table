@@ -6,15 +6,17 @@ const { computed } = Ember;
 export default Ember.Component.extend({
   layout,
   tagName: 'th',
-  classNameBindings: ['alignCenter:center', 'alignRight:right'],
+  classNameBindings: ['alignCenter:center', 'alignRight:right', 'textWrap'],
   alignCenter: computed.equal('column.align', 'center'),
   alignRight: computed.equal('column.align', 'right'),
+  textWrap: computed.equal('column.textWrap', true),
 
   column: null,
   resizable: computed.readOnly('column.resizable'),
 
   didRender() {
     this._setColumnWidth();
+    this.getAttr('table').ensureEqualHeaderHeight();
   },
 
   _setColumnWidth() {

@@ -57,3 +57,26 @@
     {{/table-column}}
   {{/table-columns}}
 {{/justa-table}}
+
+<p>Allow text wrapping for column headers with textWrap=true</p>
+
+{{#justa-table content=model as |table|}}
+  {{#fixed-table-columns table=table as |row|}}
+    {{table-column
+      row=row
+      width=150
+      textWrap=true
+      headerName='This is a super long header name'
+      valueBindingPath='displayName'}}
+
+  {{/fixed-table-columns}}
+
+  {{#table-columns table=table as |row|}}
+
+    {{table-column
+      row=row
+      width=550
+      headerName='Address'
+      valueBindingPath='address'}}
+  {{/table-columns}}
+{{/justa-table}}
