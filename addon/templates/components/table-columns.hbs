@@ -1,29 +1,11 @@
 <table class="table">
-  {{!--
-    define colgroups here. example for 2 grouped header columns
-    <colgroup span="2"></colgroup>
-    <colgroup span="2"></colgroup>
-  --}}
   <thead>
-    {{!--
-      For grouped:
-      <tr>
-        <th colspan="2" scope="colgroup">Mars</th>
-        <th colspan="2" scope="colgroup">Venus</th>
-      </tr>
-
-      <tr>
-        <th scope="col">Produced</th>
-        <th scope="col">Sold</th>
-        <th scope="col">Produced</th>
-        <th scope="col">Sold</th>
-      </tr>
-
-      http://www.w3.org/WAI/tutorials/tables/irregular/
-    --}}
     <tr>
       {{#each columns as |column|}}
-        {{component column.headerComponent column=column onColumnWidthChange=(action 'columnWidthChanged')}}
+        {{component column.headerComponent
+          table=table
+          column=column
+          onColumnWidthChange=(action 'columnWidthChanged')}}
       {{/each}}
     </tr>
   </thead>
@@ -32,26 +14,25 @@
     {{! TODO: render diff template instead of this if }}
     {{#if table.collapsable}}
       {{#each table.content as |rowGroup|}}
-        <tr class="{{mergedRowClasses}} collapsable {{if rowGroup.isCollapsed 'is-collapsed'}}" {{action 'toggleRowCollapse' rowGroup}}>
-          <td colspan={{columns.length}} class="table-cell">
-            {{rowGroup.label}}
-          </td>
+        <tr class="table-row {{mergedRowClasses}} collapsable {{if (eq rowGroup.isCollapsed false) 'is-expanded' 'is-collapsed'}} {{if rowGroup.loading 'is-loading'}}" {{action 'toggleRowCollapse' rowGroup}}>
+
+          {{#if rowGroup.label}}
+            <td colspan={{columns.length}} class="table-cell">
+              {{rowGroup.label}}
+            </td>
+          {{else}}
+            {{yield rowGroup}}
+          {{/if}}
         </tr>
-        {{#if rowGroup.loading}}
-          <tr>
-            <td colspan={{columns.length}} class="table-cell">LOADIN!</td>
+        {{#each rowGroup.data as |childRow|}}
+          <tr class="{{if rowGroup.isCollapsed 'is-collapsed'}}">
+            {{yield childRow}}
           </tr>
         {{else}}
-          {{#each rowGroup.data as |childRow|}}
-            <tr class="{{if rowGroup.isCollapsed 'is-collapsed'}}">
-              {{yield childRow}}
-            </tr>
-          {{else}}
-            <tr class="is-collapsed">
-              {{yield}}
-            </tr>
-          {{/each}}
-        {{/if}}
+          <tr class="is-collapsed">
+            {{yield}}
+          </tr>
+        {{/each}}
       {{/each}}
     {{else}}
       {{#each table.content as |row|}}

@@ -14,7 +14,7 @@
     height: 36px;
   }
 
-  tr:hover {
+  tr:hover, tr.hover {
     background: #e9f7f7;
   }
 
@@ -32,6 +32,10 @@
     &.right {
       text-align: right;
     }
+  }
+
+  th.text-wrap {
+    white-space: normal;
   }
 
   table {
