@@ -36,7 +36,7 @@
       {{/each}}
     {{else}}
       {{#each table.content as |row|}}
-        <tr class={{mergedRowClasses}} style={{rowHeight}}>
+        <tr class="table-row {{mergedRowClasses}}" style={{rowHeight}}>
           {{yield row}}
         </tr>
       {{/each}}
