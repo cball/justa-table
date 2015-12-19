@@ -2,13 +2,15 @@ import Ember from 'ember';
 import layout from '../templates/components/table-column';
 
 const {
+  Component,
   computed,
   get,
   isEmpty,
-  run
+  run,
+  assert
 } = Ember;
 
-export default Ember.Component.extend({
+export default Component.extend({
   layout,
   tagName: 'td',
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
@@ -62,7 +64,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    Ember.assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
+    assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
     run.scheduleOnce('actions', this, this._registerWithParent);
 
     this._setValueDependentKeys();
