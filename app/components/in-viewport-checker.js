@@ -1,0 +1,1 @@
+export { default } from 'justa-table/components/in-viewport-checker';

@@ -1,15 +1,9 @@
-{{!-- {{#if noContent}}
+{{#if noContent}}
   <h2>No Content</h2>
-{{else}} --}}
+{{else}}
   {{yield this}}
-{{!-- {{/if}} --}}
-{{!-- {{#infinity-loader infinityModel=model loadingText="what the"}}
-  <table class="table">
-    <tr>
-      <td>
-        <i class="fa fa-refresh fa-spin"></i>
-        <span>Loading...</span>
-      </td>
-    </tr>
-  </table>
-{{/infinity-loader}} --}}
+{{/if}}
+
+{{#if paginate}}
+  {{in-viewport-checker on-enter-viewport=(action 'viewportEntered')}}
+{{/if}}

@@ -1,12 +1,33 @@
 import Ember from 'ember';
 import layout from '../templates/components/justa-table';
 
-const { empty } = Ember.computed;
-const { run, isEmpty } = Ember;
+const {
+  Component,
+  run,
+  isEmpty,
+  RSVP,
+  computed: { empty }
+} = Ember;
 
-export default Ember.Component.extend({
+export default Component.extend({
   layout,
   classNames: ['justa-table'],
+  classNameBindings: ['isLoading'],
+
+  init() {
+    this._super(...arguments);
+    let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
+    if (!onLoadMoreRowsAction) {
+      this.attrs['on-load-more-rows'] = RSVP.resolve();
+    }
+  },
+
+  /**
+    If the table should use pagination. Will fire the 'on-load-more-rows'
+    action when it enters the viewport.
+    @public
+  */
+  paginate: false,
 
   /**
     Css classes to apply to table rows.
@@ -53,12 +74,11 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    /**
-      Action triggered when the loader is in view.
-      @public
-    */
-    infinityLoad() {
-      this.sendAction('infinityLoad');
+    viewportEntered() {
+      if (this.getAttr('on-load-more-rows')) {
+        this.set('isLoading', true);
+        this.attrs['on-load-more-rows']().finally(() => this.set('isLoading', false));
+      }
     }
   }
 });
