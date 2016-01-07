@@ -4,7 +4,7 @@ This README outlines the details of collaborating on this Ember addon.
 
 ## Including In An Ember Application
 
-Here is the simplest way to get started with ember-modal-dialog:
+Here is the simplest way to get started with justa-table:
 
 ```sh
 ember install cball/justa-table
