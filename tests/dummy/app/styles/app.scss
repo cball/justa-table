@@ -1,7 +1,8 @@
 $icon-font-path: '/assets/bootstrap/';
 @import "bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
 
-@import "addon/styles/addon";
+@import "justa-table/justa-table-structure";
+@import "justa-table/justa-table-appearance";
 
 .panel-nav-tabs {
   .panel-heading {

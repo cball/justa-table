@@ -1,0 +1,57 @@
+.justa-table {
+  margin-bottom: 1em;
+  border: 1px solid #e5e5e5;
+
+  tr:hover, tr.hover {
+    background: #e9f7f7;
+  }
+
+  th {
+    border-right: 1px solid #666;
+  }
+
+  /* TODO: pass row height in table setup when cloaking? */
+  td {
+    // height: 32px;
+    padding: 7px 10px;
+    line-height: 16px;
+    border-right: 1px solid #e5e5e5;
+    background: none;
+  }
+
+  .fixed-table-columns {
+    tr:hover {
+      background: none;
+    }
+
+    td, td:hover {
+      background: rgb(245, 245, 245);
+    }
+  }
+
+  .fake-rowspan {
+    td {
+      border-top: none;
+    }
+  }
+
+  td.fake-rowspan {
+    border-top: 1px solid #fff;
+    background: #fff;
+  }
+
+  .last-row-in-group {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .infinity-loader {
+    table {
+      position: absolute;
+      bottom: -19px;
+      left: 0px;
+      border-left: 1px solid #e5d5d5;
+      text-align: center;
+      width: 100%;
+    }
+  }
+}
