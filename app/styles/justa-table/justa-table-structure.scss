@@ -1,0 +1,72 @@
+.justa-table {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  // TODO: only need if forced fixed height
+  //height: 700px;
+  //overflow: auto;
+
+  tr {
+    height: 36px;
+  }
+
+  th, td {
+    position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    table-layout: fixed;
+
+    &.center {
+      text-align: center;
+    }
+
+    &.right {
+      text-align: right;
+    }
+  }
+
+  th.text-wrap {
+    white-space: normal;
+  }
+
+  table {
+    float: left;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .table-columns {
+    overflow: auto;
+  }
+
+  .fixed-table-columns {
+    table {
+      // we have to set this to something, choose default 1 column width.
+      // expected that fixed columns have set widths which will override this
+      // width: 100px;
+    }
+  }
+
+  .is-collapsed {
+    display: none;
+  }
+
+  .collapsable.is-collapsed {
+    display: table-row;
+  }
+
+  .resize-handle {
+    position: absolute;
+    width: 7px;
+    cursor: ew-resize;
+    margin-left: -3px;
+    z-index: 2;
+    height: 100%;
+    top: 0;
+    right: 0;
+  }
+}
