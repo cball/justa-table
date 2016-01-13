@@ -1,0 +1,17 @@
+{{#justa-table content=model paginate=true on-load-more-rows=(action 'loadMoreUsers') as |table|}}
+  {{#table-columns table=table as |row|}}
+
+    {{table-column
+      row=row
+      width=190
+      headerName='Name'
+      valueBindingPath='displayName'}}
+
+    {{#table-column headerName='Image'}}
+      <a href="#">
+        <img src={{row.image}} height="32" {{action 'imageClicked' row}} />
+      </a>
+    {{/table-column}}
+
+  {{/table-columns}}
+{{/justa-table}}
