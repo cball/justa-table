@@ -7,7 +7,8 @@ const {
   set,
   isEmpty,
   isNone,
-  computed
+  computed,
+  computed: { readOnly }
 } = Ember;
 
 export default Ember.Component.extend({
@@ -31,6 +32,12 @@ export default Ember.Component.extend({
     @public
   */
   rowClasses: null,
+
+  /**
+    Name of data property for row groups
+    @public
+  */
+  rowGroupDataName: readOnly('table.rowGroupDataName'),
 
   init() {
     this._super(...arguments);
@@ -131,14 +138,14 @@ export default Ember.Component.extend({
       } else {
         set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
       }
-
       // TODO make this smarter by taking option if we should do this
-      let shouldFetch = isEmpty(rowGroup.data) && !rowGroup.isCollapsed;
+      let rowData = get(rowGroup, this.get('rowGroupDataName'));
+      let shouldFetch = isEmpty(rowData) && !rowGroup.isCollapsed;
 
       if (shouldFetch) {
         set(rowGroup, 'loading', true);
         this.attrs.onRowExpand(rowGroup).then((data) => {
-          set(rowGroup, 'data', rowGroup.data.concat(data));
+          set(rowGroup, this.get('rowGroupDataName'), rowData.concat(data));
         }).finally(() => {
           set(rowGroup, 'loading', false);
         });

@@ -21,6 +21,12 @@ export default Ember.Component.extend({
   noContent: empty('content'),
 
   /**
+    Name of data property for row groups in the table columns
+    @public
+  */
+  rowGroupDataName: 'data',
+
+  /**
     Ensure header heights are equal. Schedules after render to ensure it's
     called once per table.
     @public
