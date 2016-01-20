@@ -13,6 +13,7 @@ const {
 export default Component.extend({
   layout,
   tagName: 'td',
+  attributeBindings: ['cellTitle:title'],
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
@@ -54,6 +55,14 @@ export default Component.extend({
     let value = this.get('_value');
     let useFakeRowspan = this.get('useFakeRowspan');
     return useFakeRowspan && isEmpty(value);
+  }),
+
+  /**
+    Return the title attribute for the tag with the cell value
+    @public
+  */
+  cellTitle: computed('title', '_value', function() {
+    return this.getAttr('title') || this.get('_value');
   }),
 
   /**
