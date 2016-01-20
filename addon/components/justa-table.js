@@ -77,7 +77,12 @@ export default Component.extend({
     viewportEntered() {
       if (this.getAttr('on-load-more-rows')) {
         this.set('isLoading', true);
-        this.attrs['on-load-more-rows']().finally(() => this.set('isLoading', false));
+        let promise = this.attrs['on-load-more-rows']();
+        if (promise) {
+          promise.finally(() => this.set('isLoading', false));
+        } else {
+          this.set('isLoading', false);
+        }
       }
     }
   }
