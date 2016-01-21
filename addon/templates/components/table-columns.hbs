@@ -26,7 +26,7 @@
           {{/if}}
         </tr>
         {{#each (get rowGroup rowGroupDataName) as |childRow|}}
-          <tr class="{{if rowGroup.isCollapsed 'is-collapsed'}}">
+          <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
             {{yield childRow}}
           </tr>
         {{else}}
