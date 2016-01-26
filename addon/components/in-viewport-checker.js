@@ -23,9 +23,10 @@ export default Component.extend(InViewportMixin, {
 
   didEnterViewport() {
     let enterViewportAction = this.attrs['on-enter-viewport']();
-
-    if (enterViewportAction === false) {
-      this.destroy();
-    }
+    enterViewportAction.then((result) => {
+      if (!result) {
+        this.destroy();
+      }
+    });
   }
 });

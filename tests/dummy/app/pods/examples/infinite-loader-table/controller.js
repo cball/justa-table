@@ -4,7 +4,8 @@ import generateUsers from 'dummy/utils/generate-users';
 const {
   A,
   Controller,
-  computed
+  computed,
+  RSVP
 } = Ember;
 
 export default Controller.extend({
@@ -28,6 +29,9 @@ export default Controller.extend({
 
       users.pushObjects(newUsers);
       this.set('page', currentPage + 1);
+      return new RSVP.Promise((resolve) => {
+        resolve(users);
+      });
     }
   }
 });
