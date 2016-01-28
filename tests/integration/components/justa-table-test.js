@@ -5,6 +5,10 @@ moduleForComponent('justa-table', 'Integration | Component | justa table', {
   integration: true
 });
 
+function getHeader(context) {
+  return context.$(`table th`);
+}
+
 function getCell(context, rowObject) {
   let { row, cell } = rowObject;
   return context.$(`tbody tr:nth-of-type(${row}) td:nth-of-type(${cell})`);
@@ -65,6 +69,54 @@ test('adds a fake rowspan class if cell content isEmpty and useFakeRowspan is tr
   `);
 
   assert.ok(getCell(this, { row: 3, cell: 1 }).hasClass('fake-rowspan'));
+});
+
+test('adds sticky-header class to header rows if stickyHeader is passed to table-columns as true', function(assert) {
+  let content = [
+    { name: 'Fred' },
+    { name: 'Wilma' },
+    { name: undefined }
+  ];
+
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns stickyHeader=true table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='foo'
+          useFakeRowspan=true
+          valueBindingPath='name'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+  assert.ok(getHeader(this).hasClass('sticky-header'));
+});
+
+test('does not add sticky-header class to header rows if stickyHeader is passed to table-columns is not true', function(assert) {
+  let content = [
+    { name: 'Fred' },
+    { name: 'Wilma' },
+    { name: undefined }
+  ];
+
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='foo'
+          useFakeRowspan=true
+          valueBindingPath='name'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+  assert.notOk(getHeader(this).hasClass('sticky-header'));
 });
 
 test('passes rowHeight to rows', function(assert) {

@@ -14,6 +14,16 @@ const {
 export default Ember.Component.extend({
   layout,
   classNames: ['table-columns'],
+  headerClassNames: computed('stickyHeader', function(){
+    if (this.get('stickyHeader')) {
+      return ['sticky-header'];
+    } 
+  }),
+
+  /**
+    Sticky headers keep table header in a fixed position
+  */
+  stickyHeader: false,
 
   /**
     The parent table component, it is expected to be passed in.
