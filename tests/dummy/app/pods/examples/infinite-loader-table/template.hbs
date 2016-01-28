@@ -1,4 +1,4 @@
-{{#justa-table content=model paginate=true on-load-more-rows=(action 'loadMoreUsers') as |table|}}
+{{#justa-table content=model paginate=true stickyHeader=true on-load-more-rows=(action 'loadMoreUsers') as |table|}}
   {{#table-columns table=table as |row|}}
 
     {{table-column

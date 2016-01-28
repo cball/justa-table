@@ -19,6 +19,7 @@ module.exports = function(defaults) {
   var UnwatchedDir  = require('broccoli-source').UnwatchedDir;
 
   app.import(app.bowerDirectory + '/bootstrap-sass/assets/javascripts/bootstrap.js');
+  app.import(app.bowerDirectory + '/StickyTableHeaders/js/jquery.stickytableheaders.min.js');
 
   var bootstrapFonts = funnel(app.bowerDirectory + '/bootstrap-sass/assets/fonts/bootstrap', {
     destDir: '/assets/bootstrap'

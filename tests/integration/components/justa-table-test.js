@@ -5,8 +5,8 @@ moduleForComponent('justa-table', 'Integration | Component | justa table', {
   integration: true
 });
 
-function getHeader(context) {
-  return context.$(`table th`);
+function getContainer(context) {
+  return context.$(`.justa-table`);
 }
 
 function getCell(context, rowObject) {
@@ -71,7 +71,7 @@ test('adds a fake rowspan class if cell content isEmpty and useFakeRowspan is tr
   assert.ok(getCell(this, { row: 3, cell: 1 }).hasClass('fake-rowspan'));
 });
 
-test('adds sticky-header class to header rows if stickyHeader is passed to table-columns as true', function(assert) {
+test('adds sticky-header class to containing div if stickyHeader is passed to justa-table as true', function(assert) {
   let content = [
     { name: 'Fred' },
     { name: 'Wilma' },
@@ -81,8 +81,8 @@ test('adds sticky-header class to header rows if stickyHeader is passed to table
   this.set('content', content);
 
   this.render(hbs`
-    {{#justa-table content=content as |table|}}
-      {{#table-columns stickyHeader=true table=table as |row|}}
+    {{#justa-table stickyHeader=true content=content as |table|}}
+      {{#table-columns  table=table as |row|}}
         {{table-column
           row=row
           headerName='foo'
@@ -92,7 +92,7 @@ test('adds sticky-header class to header rows if stickyHeader is passed to table
       {{/table-columns}}
     {{/justa-table}}
   `);
-  assert.ok(getHeader(this).hasClass('sticky-header'));
+  assert.ok(getContainer(this).hasClass('sticky-header'));
 });
 
 test('does not add sticky-header class to header rows if stickyHeader is passed to table-columns is not true', function(assert) {
@@ -116,7 +116,7 @@ test('does not add sticky-header class to header rows if stickyHeader is passed 
       {{/table-columns}}
     {{/justa-table}}
   `);
-  assert.notOk(getHeader(this).hasClass('sticky-header'));
+  assert.notOk(getContainer(this).hasClass('sticky-header'));
 });
 
 test('passes rowHeight to rows', function(assert) {
