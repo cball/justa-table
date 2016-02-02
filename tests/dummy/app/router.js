@@ -13,6 +13,7 @@ Router.map(function() {
     this.route('infinite-loader-table');
     this.route('collapsable-table');
     this.route('collapsable-table-with-ajax');
+    this.route('group-by-name');
   });
 });
 

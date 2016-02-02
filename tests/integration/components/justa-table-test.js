@@ -73,7 +73,7 @@ test('adds a fake rowspan class if cell content isEmpty and useFakeRowspan is tr
   });
 });
 
-test('passes rowHeight to rows', function(assert) {
+test('adds sticky-header class to containing div if stickyHeader is passed to justa-table as true', function(assert) {
   let content = [
     { name: 'Fred' }
   ];

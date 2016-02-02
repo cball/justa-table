@@ -19,13 +19,19 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
-
   /**
     The header component this column should use to render its header.
     @public
     @default 'basic-header'
   */
   headerComponent: 'basic-header',
+
+  /**
+    Rows whose value matches the prior row will be returned as null
+    resulting in them appearing grouped
+    @public
+  */
+  groupWithPriorRow: false,
 
   /**
     The width of this column in pixels.
