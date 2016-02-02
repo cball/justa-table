@@ -19,7 +19,6 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
-
   /**
     Returns a valid table reference. Currently, collapsable and regular tables
     have different parent implementations. For now, confine the private API mess
@@ -37,6 +36,13 @@ export default Component.extend({
     @default 'basic-header'
   */
   headerComponent: 'basic-header',
+
+  /**
+    Rows whose value matches the prior row will be returned as null
+    resulting in them appearing grouped
+    @public
+  */
+  groupWithPriorRow: false,
 
   /**
     The width of this column in pixels.
