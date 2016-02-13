@@ -25,15 +25,17 @@
             {{yield rowGroup}}
           {{/if}}
         </tr>
-        {{#each (get rowGroup rowGroupDataName) as |childRow|}}
-          <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
-            {{yield childRow}}
-          </tr>
+        {{#if (get rowGroup rowGroupDataName)}}
+          {{#each (get rowGroup rowGroupDataName) as |childRow|}}
+            <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
+              {{yield childRow}}
+            </tr>
+          {{/each}}
         {{else}}
           <tr class="is-collapsed">
             {{yield}}
           </tr>
-        {{/each}}
+        {{/if}}
       {{/each}}
     {{else}}
       {{#each table.content as |row|}}
