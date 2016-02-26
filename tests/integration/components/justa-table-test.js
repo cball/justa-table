@@ -111,3 +111,75 @@ test('adds rowClasses to rows', function(assert) {
   assert.ok(getRow(this, { row: 1 }).hasClass('hey'), 'row should have hey class');
   assert.ok(getRow(this, { row: 1 }).hasClass('man'), 'row should have man class');
 });
+
+test('title attribute defaults to value', function(assert) {
+  let content = [
+    { name: 'Fred' }
+  ];
+
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='foo'
+          valueBindingPath='name'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+
+  assert.equal(this.$('td[title="Fred"]').length, 1, 'title attribute should default to value');
+});
+
+test('title attribute can be customized', function(assert) {
+  let content = [
+    { name: 'Fred' }
+  ];
+
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          title='whoa'
+          headerName='foo'
+          valueBindingPath='name'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+
+  assert.equal(this.$('td[title="whoa"]').length, 1, 'title attribute should be whoa');
+});
+
+test('title attribute can be customized', function(assert) {
+  let content = [
+    {
+      person: {
+        name: 'fred'
+      }
+    }
+  ];
+
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          title=''
+          headerName='foo'
+          valueBindingPath='person'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+
+  assert.equal(this.$('td[title=""]').length, 1, 'title attribute should be whoa');
+});

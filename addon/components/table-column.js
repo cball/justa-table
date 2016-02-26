@@ -62,7 +62,9 @@ export default Component.extend({
     @public
   */
   cellTitle: computed('title', '_value', function() {
-    return this.getAttr('title') || this.get('_value');
+    let value = this.get('_value');
+
+    return this.getWithDefault('title', value);
   }),
 
   /**
