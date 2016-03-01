@@ -7,6 +7,7 @@ export default Ember.Component.extend({
   layout,
   tagName: 'th',
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'textWrap'],
+  classNames: ['basic-header'],
   alignCenter: computed.equal('column.align', 'center'),
   alignRight: computed.equal('column.align', 'right'),
   textWrap: computed.equal('column.textWrap', true),
