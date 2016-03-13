@@ -11,38 +11,18 @@
     </tr>
   </thead>
 
-  <tbody>
-    {{! TODO: render diff template instead of this if }}
-    {{#if table.collapsable}}
-      {{#each table.content as |rowGroup|}}
-        <tr class="table-row {{mergedRowClasses}} collapsable {{if (eq rowGroup.isCollapsed false) 'is-expanded' 'is-collapsed'}} {{if rowGroup.loading 'is-loading'}}" {{action 'toggleRowCollapse' rowGroup}}>
+  {{#vertical-collection
+    tagName="tbody"
+    itemClassNames=(concat 'table-row ' mergedRowClasses)
+    content=table.content
+    defaultHeight=rowHeight
+    bufferSize=0.5
+    alwaysUseDefaultHeight=true
+    scrollThrottle=16
+    containerSelector=".justa-table"
+    as |row|}}
 
-          {{#if rowGroup.label}}
-            <td colspan={{columns.length}} class="table-cell">
-              {{rowGroup.label}}
-            </td>
-          {{else}}
-            {{yield rowGroup}}
-          {{/if}}
-        </tr>
-        {{#if (get rowGroup rowGroupDataName)}}
-          {{#each (get rowGroup rowGroupDataName) as |childRow|}}
-            <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
-              {{yield childRow}}
-            </tr>
-          {{/each}}
-        {{else}}
-          <tr class="is-collapsed">
-            {{yield}}
-          </tr>
-        {{/if}}
-      {{/each}}
-    {{else}}
-      {{#each table.content as |row|}}
-        <tr class="table-row {{mergedRowClasses}}" style={{rowHeight}}>
-          {{yield row}}
-        </tr>
-      {{/each}}
-    {{/if}}
-  </tbody>
+    {{yield row}}
+
+  {{/vertical-collection}}
 </table>
