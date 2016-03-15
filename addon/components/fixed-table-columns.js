@@ -35,6 +35,9 @@ export default TableColumns.extend({
   },
 
   actions: {
+    didRenderTable() {
+      this.sendAction('didRenderTable', this);
+    },
     columnWidthChanged() {
       this._super(...arguments);
       this._setTableWidth();
