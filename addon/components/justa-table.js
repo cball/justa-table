@@ -75,7 +75,9 @@ export default Component.extend({
 
   actions: {
     didRenderTable() {
-      this.sendAction('didRenderTable', this);
+      Ember.run.scheduleOnce(() => {
+        this.sendAction('didRenderTable', this);
+      });
     },
     viewportEntered() {
       if (this.getAttr('on-load-more-rows')) {

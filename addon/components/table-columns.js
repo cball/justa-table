@@ -127,10 +127,6 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    didRenderTable() {
-      this.get('parentView').send('didRenderTable');
-    },
-
     // TODO: move to collapse table
     toggleRowCollapse(rowGroup) {
       let collapsed = get(rowGroup, 'isCollapsed');
