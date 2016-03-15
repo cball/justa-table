@@ -18,6 +18,7 @@ export default Ember.Component.extend({
   layout,
   classNames: ['table-columns'],
   headerClassNames: [],
+  values: {},
 
   /**
     The parent table component, it is expected to be passed in.
