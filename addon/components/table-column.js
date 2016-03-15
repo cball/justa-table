@@ -21,6 +21,17 @@ export default Component.extend({
   alignRight: computed.equal('align', 'right'),
 
   /**
+    Returns a valid table reference. Currently, collapsable and regular tables
+    have different parent implementations. For now, confine the private API mess
+    to a single place.
+    @public
+  */
+  table: computed(function() {
+    let table = get(this, 'parentView.parentView.parentView');
+    return table.get('registerColumn') ? table : get(this, 'parentView');
+  }).volatile(),
+
+  /**
     The header component this column should use to render its header.
     @public
     @default 'basic-header'
@@ -56,7 +67,7 @@ export default Component.extend({
   shouldUseFakeRowspan: computed('useFakeRowspan', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
 
-    if (!valueBindingPath || get(this, 'hasBlock')) {
+    if (!row || !valueBindingPath || get(this, 'hasBlock')) {
       return;
     }
 
@@ -96,8 +107,7 @@ export default Component.extend({
     @private
   */
   _registerWithParent() {
-    // temp hack since we're no longer a direct child
-    let table = this.get('parentView.parentView.parentView');
+    let table = this.get('table');
     table.registerColumn(this);
     this.set('_registeredParent', table);
   },
