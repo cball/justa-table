@@ -6,6 +6,7 @@ const {
   run,
   isEmpty,
   RSVP,
+  assert,
   computed: { empty }
 } = Ember;
 
@@ -71,6 +72,27 @@ export default Component.extend({
 
     fixedHeader.height(maxHeight);
     columnHeader.height(maxHeight);
+  },
+
+  /**
+    Queues sending 'didRenderTable' action.
+    @public
+  */
+  didRenderCollection() {
+    run.scheduleOnce('afterRender', this, this._sendRenderAction);
+  },
+
+  /**
+    Sends 'didRenderTable' closure action if present
+    @private
+  */
+  _sendRenderAction() {
+    let didRenderAction = this.get('didRenderTable');
+
+    if (didRenderAction) {
+      assert(`didRenderAction must be passed as a closure action. You passed ${didRenderAction}`, typeof didRenderAction === 'function');
+      didRenderAction(this);
+    }
   },
 
   actions: {

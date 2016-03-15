@@ -118,6 +118,11 @@ export default Ember.Component.extend({
     this.$().off('mouseleave', 'tr', this._onRowLeave.bind(this));
   },
 
+  didRender() {
+    this._super(...arguments);
+    this.get('table').didRenderCollection();
+  },
+
   _onRowEnter() {
     let rowIndex = this.$('tr').index(this.$('tr:hover'));
     this.get('table').$(`tr.table-row:nth-of-type(${rowIndex})`).addClass('hover');
