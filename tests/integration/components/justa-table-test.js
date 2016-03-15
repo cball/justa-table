@@ -73,7 +73,55 @@ test('adds a fake rowspan class if cell content isEmpty and useFakeRowspan is tr
   });
 });
 
-test('passes rowHeight to rows', function(assert) {
+test('Places null value in a row if groupWithPriorRow is true and the prior record has the same value', function(assert) {
+  let content = [{
+      director: 'Quentin Tarantino',
+      movie: 'Pulp Fiction'
+    },
+    {
+      director: 'Quentin Tarantino',
+      movie: 'Reservoir Dogs'
+    },
+    {
+      director: 'JJ Abrams',
+      movie: 'Star Wars Episode VII'
+    },
+    {
+      director: 'Christopher Nolan',
+      movie: 'Dark Knight Rises'
+    }
+  ];
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table stickyHeader=true content=content as |table|}}
+      {{#table-columns  table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='director'
+          groupWithPriorRow=true
+          useFakeRowspan=true
+          valueBindingPath='director'}}
+        {{table-column
+          row=row
+          headerName='movie'
+          useFakeRowspan=true
+          valueBindingPath='movie'}}
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+
+  stop();
+  Ember.run.later(() => {
+    start();
+    assert.equal(getCell(this, { row: 1, cell: 1 }).text().trim(), 'Quentin Tarantino', 'first cell should be Quentin Tarantino');
+    assert.equal(getCell(this, { row: 2, cell: 1 }).text().trim(), '', 'second row first cell should be empty');
+    assert.equal(getCell(this, { row: 3, cell: 1 }).text().trim(), 'JJ Abrams', 'third row first cell should be JJ Abrams');
+  }, 100);
+
+});
+
+test('adds sticky-header class to containing div if stickyHeader is passed to justa-table as true', function(assert) {
   let content = [
     { name: 'Fred' }
   ];

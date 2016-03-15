@@ -19,13 +19,19 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
-
   /**
     The header component this column should use to render its header.
     @public
     @default 'basic-header'
   */
   headerComponent: 'basic-header',
+
+  /**
+    Rows whose value matches the prior row will be returned as null
+    resulting in them appearing grouped
+    @public
+  */
+  groupWithPriorRow: false,
 
   /**
     The width of this column in pixels.
@@ -53,6 +59,8 @@ export default Component.extend({
   */
   useFakeRowspan: false,
 
+  blankCell: '',
+
   shouldUseFakeRowspan: computed('useFakeRowspan', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
 
@@ -75,8 +83,6 @@ export default Component.extend({
   cellTitle: computed('title', 'valueBindingPath', function() {
     let valueBindingPath = get(this, 'valueBindingPath');
     let value = getWithDefault(this, `row.${valueBindingPath}`, '');
-
-    return getWithDefault(this, 'title', value);
   }),
 
   /**
@@ -89,6 +95,10 @@ export default Component.extend({
     this._super(...arguments);
     assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
     run.scheduleOnce('actions', this, this._registerWithParent);
+
+    if (this.get('groupWithPriorRow')) {
+      run.scheduleOnce('actions', this, this._groupWithPriorRow);
+    }
   },
 
   /**
@@ -100,6 +110,22 @@ export default Component.extend({
     let table = this.get('parentView.parentView.parentView');
     table.registerColumn(this);
     this.set('_registeredParent', table);
+  },
+
+  _groupWithPriorRow() {
+    let valueBindingPath = get(this, 'valueBindingPath');
+    let value = getWithDefault(this, `row.${valueBindingPath}`, '');
+
+    // vertical-item > vertical-collection > table-columns
+    // TODO replace with something better
+    let parentView = this.get('parentView.parentView.parentView');
+    let lastValue = parentView.get(`values.${valueBindingPath}`);
+
+    if (value === lastValue) {
+      this.set('valueBindingPath', 'blankCell');
+    } else {
+      parentView.set(`values.${valueBindingPath}`, value);
+    }
   },
 
   willDestroyElement() {

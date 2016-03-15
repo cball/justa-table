@@ -17,6 +17,8 @@ const DEFAULT_ROW_HEIGHT = 37;
 export default Ember.Component.extend({
   layout,
   classNames: ['table-columns'],
+  headerClassNames: [],
+  values: {},
 
   /**
     The parent table component, it is expected to be passed in.
@@ -58,12 +60,17 @@ export default Ember.Component.extend({
   }),
 
   /**
-    Gets table's rowHeight.
+    Sets an inline style for height on all table rows from table.rowHeight.
     @public
-    @default DEFAULT_ROW_HEIGHT
   */
   rowHeight: computed('table.rowHeight', function() {
-    return getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
+    let rowHeight = this.get('table.rowHeight');
+
+    if (rowHeight) {
+      return new Ember.Handlebars.SafeString(`height: ${rowHeight}`);
+    }
+
+    return new Ember.Handlebars.SafeString('');
   }),
 
   /**
@@ -119,11 +126,11 @@ export default Ember.Component.extend({
 
   _onRowEnter() {
     let rowIndex = this.$('tr').index(this.$('tr:hover'));
-    this.get('table').$(`tr.table-row:nth-child(${rowIndex})`).addClass('hover');
+    this.getAttr('table').$(`tr.table-row:nth-child(${rowIndex})`).addClass('hover');
   },
 
   _onRowLeave() {
-    this.get('table').$('tr').removeClass('hover');
+    this.getAttr('table').$('tr').removeClass('hover');
   },
 
   actions: {
