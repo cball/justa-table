@@ -61,6 +61,10 @@ export default Component.extend({
 
   blankCell: '',
 
+  parentTable: computed('parentView', function() {
+    return this.get('parentView.parentView.parentView');
+  }),
+
   shouldUseFakeRowspan: computed('useFakeRowspan', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
 
@@ -82,7 +86,7 @@ export default Component.extend({
   */
   cellTitle: computed('title', 'valueBindingPath', function() {
     let valueBindingPath = get(this, 'valueBindingPath');
-    let value = getWithDefault(this, `row.${valueBindingPath}`, '');
+    return getWithDefault(this, `row.${valueBindingPath}`, '');
   }),
 
   /**
@@ -93,7 +97,7 @@ export default Component.extend({
 
   init() {
     this._super(...arguments);
-    assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
+    assert('Must use table column as a child of table-columns or fixed-table-columns.', this.get('parentTable'));
     run.scheduleOnce('actions', this, this._registerWithParent);
 
     if (this.get('groupWithPriorRow')) {
@@ -107,7 +111,7 @@ export default Component.extend({
   */
   _registerWithParent() {
     // temp hack since we're no longer a direct child
-    let table = this.get('parentView.parentView.parentView');
+    let table = this.get('parentTable');
     table.registerColumn(this);
     this.set('_registeredParent', table);
   },
@@ -118,7 +122,7 @@ export default Component.extend({
 
     // vertical-item > vertical-collection > table-columns
     // TODO replace with something better
-    let parentView = this.get('parentView.parentView.parentView');
+    let parentView = this.get('parentTable');
     let lastValue = parentView.get(`values.${valueBindingPath}`);
 
     if (value === lastValue) {

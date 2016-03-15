@@ -1,6 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
+import Ember from 'ember';
 
 moduleForComponent('justa-table', 'Integration | Component | justa table', {
   integration: true
@@ -153,7 +154,7 @@ test('adds rowClasses to rows', function(assert) {
   this.set('content', content);
 
   this.render(hbs`
-    {{#justa-table content=content as |table|}}
+    {{#justa-table content=content rowHeight='40px' as |table|}}
       {{#table-columns table=table rowClasses='hey man' as |row|}}
         {{table-column
           row=row

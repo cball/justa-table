@@ -64,13 +64,7 @@ export default Ember.Component.extend({
     @public
   */
   rowHeight: computed('table.rowHeight', function() {
-    let rowHeight = this.get('table.rowHeight');
-
-    if (rowHeight) {
-      return new Ember.Handlebars.SafeString(`height: ${rowHeight}`);
-    }
-
-    return new Ember.Handlebars.SafeString('');
+    return getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
   }),
 
   /**
