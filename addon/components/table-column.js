@@ -19,14 +19,13 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
-
   /**
     Returns a valid table reference. Currently, collapsable and regular tables
     have different parent implementations. For now, confine the private API mess
     to a single place.
     @public
   */
-  table: computed(function() {
+  table: computed('parentView', function() {
     let table = get(this, 'parentView.parentView.parentView');
     return table.get('registerColumn') ? table : get(this, 'parentView');
   }).volatile(),
@@ -37,6 +36,13 @@ export default Component.extend({
     @default 'basic-header'
   */
   headerComponent: 'basic-header',
+
+  /**
+    Rows whose value matches the prior row will be returned as null
+    resulting in them appearing grouped
+    @public
+  */
+  groupWithPriorRow: false,
 
   /**
     The width of this column in pixels.
@@ -63,6 +69,8 @@ export default Component.extend({
     @default false
   */
   useFakeRowspan: false,
+
+  blankCell: '',
 
   shouldUseFakeRowspan: computed('useFakeRowspan', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
@@ -98,8 +106,12 @@ export default Component.extend({
 
   init() {
     this._super(...arguments);
-    assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
+    assert('Must use table column as a child of table-columns or fixed-table-columns.', this.get('table'));
     run.scheduleOnce('actions', this, this._registerWithParent);
+
+    if (this.get('groupWithPriorRow')) {
+      run.scheduleOnce('actions', this, this._groupWithPriorRow);
+    }
   },
 
   /**
@@ -110,6 +122,22 @@ export default Component.extend({
     let table = this.get('table');
     table.registerColumn(this);
     this.set('_registeredParent', table);
+  },
+
+  _groupWithPriorRow() {
+    let valueBindingPath = get(this, 'valueBindingPath');
+    let value = getWithDefault(this, `row.${valueBindingPath}`, '');
+
+    // vertical-item > vertical-collection > table-columns
+    // TODO replace with something better
+    let table = this.get('table');
+    let lastValue = table.get(`values.${valueBindingPath}`);
+
+    if (value === lastValue) {
+      this.set('valueBindingPath', 'blankCell');
+    } else {
+      table.set(`values.${valueBindingPath}`, value);
+    }
   },
 
   willDestroyElement() {

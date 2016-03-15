@@ -17,6 +17,7 @@ const DEFAULT_ROW_HEIGHT = 37;
 export default Ember.Component.extend({
   layout,
   classNames: ['table-columns'],
+  values: {},
 
   /**
     The parent table component, it is expected to be passed in.
