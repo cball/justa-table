@@ -20,7 +20,7 @@ test('basic table properly re-renders when rows are removed', function(assert) {
     let rows = $('.table-columns tr').length;
     let headers = $('.table-columns th').text().trim();
 
-    assert.equal(rows, 51, 'should have 50 rows + header');
+    assert.equal(rows, 101, 'should have 50 rows + header');
     assert.ok(headers.match(/name/i), 'should have name header');
     assert.ok(headers.match(/image/i), 'should have image header');
   });

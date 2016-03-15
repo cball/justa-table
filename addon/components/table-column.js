@@ -5,6 +5,8 @@ const {
   Component,
   computed,
   get,
+  getWithDefault,
+  getProperties,
   isEmpty,
   run,
   assert
@@ -17,6 +19,17 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
+
+  /**
+    Returns a valid table reference. Currently, collapsable and regular tables
+    have different parent implementations. For now, confine the private API mess
+    to a single place.
+    @public
+  */
+  table: computed(function() {
+    let table = get(this, 'parentView.parentView.parentView');
+    return table.get('registerColumn') ? table : get(this, 'parentView');
+  }).volatile(),
 
   /**
     The header component this column should use to render its header.
@@ -51,20 +64,30 @@ export default Component.extend({
   */
   useFakeRowspan: false,
 
-  shouldUseFakeRowspan: computed('useFakeRowspan', '_value', function() {
-    let value = this.get('_value');
-    let useFakeRowspan = this.get('useFakeRowspan');
+  shouldUseFakeRowspan: computed('useFakeRowspan', function() {
+    let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
+
+    if (!row || !valueBindingPath || get(this, 'hasBlock')) {
+      return;
+    }
+
+    let value = get(row, valueBindingPath);
+    let useFakeRowspan = get(this, 'useFakeRowspan');
+
     return useFakeRowspan && isEmpty(value);
   }),
 
   /**
-    Return the title attribute for the tag with the cell value
+    Return the title attribute for the tag with the cell value.
+    If a title attribute is specified, it is used. Otherwise, title defaults to
+    the value of row.valueBindingPath, returning a blank string if not found.
     @public
   */
-  cellTitle: computed('title', '_value', function() {
-    let value = this.get('_value');
+  cellTitle: computed('title', 'valueBindingPath', function() {
+    let valueBindingPath = get(this, 'valueBindingPath');
+    let value = getWithDefault(this, `row.${valueBindingPath}`, '');
 
-    return this.getWithDefault('title', value);
+    return getWithDefault(this, 'title', value);
   }),
 
   /**
@@ -77,53 +100,30 @@ export default Component.extend({
     this._super(...arguments);
     assert('Must use table column as a child of table-columns or fixed-table-columns.', this.parentView);
     run.scheduleOnce('actions', this, this._registerWithParent);
-
-    this._setValueDependentKeys();
   },
 
   /**
-    Sets dependent keys on the _value computed property. This is done since
-    we need to clear the cached version based on a dynamic key, and volatile()
-    does not do the needful.
-    @private
-  **/
-  _setValueDependentKeys() {
-    const path = this.get('valueBindingPath');
-    const pathKey = `row.${path}`;
-    this._value.property('valueBindingPath', 'row', pathKey);
-  },
-
-  /**
-    Return the value for the cell based on row.valueBindingPath. Only used if
-    a block is not passed, the path is provided, and the row is not empty.
-    @private
-  */
-  _value: computed('valueBindingPath', 'row', function() {
-    const path = this.get('valueBindingPath');
-    const row = this.get('row');
-    const hasBlockParams = this.get('hasBlockParams');
-
-    if (hasBlockParams || isEmpty(path) || isEmpty(row)) {
-      return null;
-    }
-
-    return get(row, path);
-  }),
-
-  /**
-    Register this column with its parent view.
+    Register this column with its parent table.
     @private
   */
   _registerWithParent() {
-    let parent = this.get('parentView');
-    parent.registerColumn(this);
-    this.set('_registeredParent', parent);
+    let table = this.get('table');
+    table.registerColumn(this);
+    this.set('_registeredParent', table);
   },
 
   willDestroyElement() {
     let parent = this.get('_registeredParent');
     if (parent) {
-      parent.unregisterColumn(this);
+      run.scheduleOnce('actions', this, this._unregisterWithParent, parent);
     }
+  },
+
+  /**
+    Unregister this column with its parent table.
+    @private
+  */
+  _unregisterWithParent(parent) {
+    parent.unregisterColumn(this);
   }
 });

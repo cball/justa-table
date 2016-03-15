@@ -4,10 +4,8 @@
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-
-  // TODO: only need if forced fixed height
-  //height: 700px;
-  //overflow: auto;
+  max-height: 500px;
+  overflow: scroll;
 
   tr {
     height: 36px;
@@ -29,6 +27,13 @@
     }
   }
 
+  th {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
   th.text-wrap {
     white-space: normal;
   }
@@ -41,6 +46,11 @@
 
   .table-columns {
     overflow: auto;
+    // display: block;
+    // height: 500px;
+    // max-height: 500px;
+    // overflow: scroll;
+    // position: relative;
   }
 
   .fixed-table-columns {
