@@ -12,30 +12,32 @@
   </thead>
 
   {{#if table.collapsable}}
-    {{#each table.content as |rowGroup|}}
-      <tr class="table-row {{mergedRowClasses}} collapsable {{if (eq rowGroup.isCollapsed false) 'is-expanded' 'is-collapsed'}} {{if rowGroup.loading 'is-loading'}}" {{action 'toggleRowCollapse' rowGroup}}>
-        {{#if rowGroup.label}}
-          <td colspan={{columns.length}} class="table-cell">
-            {{rowGroup.label}}
-          </td>
-        {{else}}
-          {{yield rowGroup}}
-        {{/if}}
-      </tr>
-
-      {{#if (get rowGroup rowGroupDataName)}}
-        {{#each (get rowGroup rowGroupDataName) as |childRow|}}
-          <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
-            {{yield childRow}}
-          </tr>
-        {{/each}}
-      {{else}}
-        <tr class="is-collapsed">
-          {{yield}}
+    <tbody>
+      {{#each table.content as |rowGroup|}}
+        <tr class="table-row {{mergedRowClasses}} collapsable {{if (eq rowGroup.isCollapsed false) 'is-expanded' 'is-collapsed'}} {{if rowGroup.loading 'is-loading'}}" {{action 'toggleRowCollapse' rowGroup}}>
+          {{#if rowGroup.label}}
+            <td colspan={{columns.length}} class="table-cell">
+              {{rowGroup.label}}
+            </td>
+          {{else}}
+            {{yield rowGroup}}
+          {{/if}}
         </tr>
-      {{/if}}
 
-    {{/each}}
+        {{#if (get rowGroup rowGroupDataName)}}
+          {{#each (get rowGroup rowGroupDataName) as |childRow|}}
+            <tr class="table-row {{if rowGroup.isCollapsed 'is-collapsed'}}">
+              {{yield childRow}}
+            </tr>
+          {{/each}}
+        {{else}}
+          <tr class="is-collapsed">
+            {{yield}}
+          </tr>
+        {{/if}}
+
+      {{/each}}
+    </tbody>
   {{else}}
     {{#vertical-collection
       tagName="tbody"
