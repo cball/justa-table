@@ -46,7 +46,8 @@
     "ember-get-helper": "1.0.4",
     "ember-run-raf": "1.1.1",
     "ember-suave": "1.2.3",
-    "ember-try": "0.0.8"
+    "ember-try": "0.0.8",
+    "smoke-and-mirrors": "cball/smoke-and-mirrors#2c265a4"
   },
   "keywords": [
     "ember-addon"
@@ -56,8 +57,7 @@
     "ember-cli-htmlbars": "^0.7.9",
     "ember-cli-sass": "^5.1.0",
     "ember-in-viewport": "2.0.4",
-    "ember-truth-helpers": "^1.0.0",
-    "smoke-and-mirrors": "cball/smoke-and-mirrors#2c265a4"
+    "ember-truth-helpers": "^1.0.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
