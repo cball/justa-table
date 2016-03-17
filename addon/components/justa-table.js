@@ -24,6 +24,13 @@ export default Component.extend({
   },
 
   /**
+    The initial / max height of the table, will overflow if rows exceed this
+    number.
+    @public
+  */
+  tableHeight: 500,
+
+  /**
     If the table should use pagination. Will fire the 'on-load-more-rows'
     action when it enters the viewport.
     @public
@@ -72,10 +79,24 @@ export default Component.extend({
 
     fixedHeader.height(maxHeight);
     columnHeader.height(maxHeight);
+
+    this._resizeTable();
   },
 
   /**
-    Queues sending 'didRenderTable' action.
+    Sets the table height before rendering. If the height of the rows is less
+    than the specified tableHeight, it will resize.
+    @private
+  */
+  _resizeTable() {
+    let requestedHeight = this.get('tableHeight');
+    let actualHeight = this.$('table').outerHeight();
+    this.$().height(Math.min(requestedHeight, actualHeight));
+  },
+
+  /**
+    Queues sending 'didRenderTable' action. This is called once the columns
+    have rendered data.
     @public
   */
   didRenderCollection() {
