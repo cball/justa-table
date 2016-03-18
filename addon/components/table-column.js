@@ -72,7 +72,7 @@ export default Component.extend({
 
   blankCell: '',
 
-  shouldUseFakeRowspan: computed('useFakeRowspan', function() {
+  shouldUseFakeRowspan: computed('useFakeRowspan', 'valueBindingPath', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
 
     if (!row || !valueBindingPath || get(this, 'hasBlock')) {
