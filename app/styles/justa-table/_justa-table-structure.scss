@@ -1,12 +1,12 @@
 .justa-table {
-  position: relative;
-  display: inline-block;
   width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
   height: 500px;
-  max-height: 500px;
-  overflow: scroll;
+  position: relative;
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
 
   tr {
     height: 36px;
@@ -40,18 +40,20 @@
   }
 
   table {
-    float: left;
+    // float: left;
     width: 100%;
     table-layout: fixed;
   }
 
+  .table-columns-wrapper {
+    position: absolute;
+  }
+
   .table-columns {
-    overflow: auto;
-    // display: block;
-    // height: 500px;
-    // max-height: 500px;
-    // overflow: scroll;
-    // position: relative;
+    overflow-x: scroll;
+    height: 500px;
+    max-height: 500px;
+    position: relative;
   }
 
   .fixed-table-columns {

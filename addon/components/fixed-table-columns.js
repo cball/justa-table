@@ -2,36 +2,34 @@ import Ember from 'ember';
 import layout from '../templates/components/table-columns';
 import TableColumns from './table-columns';
 
-const { computed } = Ember;
+const {
+  assert
+} = Ember;
 
 export default TableColumns.extend({
   layout,
+  classNames: ['fixed-table-columns-wrapper'],
 
   init() {
     this._super(...arguments);
-    this.classNames = ['fixed-table-columns'];
+    assert('fixed columns cannot be resizable', !this.resizable);
+    // this.classNames = ['fixed-table-columns'];
   },
 
-  columnWidths: computed.mapBy('columns', 'width'),
-  columnBorderWidths: computed('columns.[]', function columnBorderWidths() {
-    return this.get('columns').map((column) => {
-      let style = getComputedStyle(column.element);
-      return parseInt(style.borderRightWidth, 10) + parseInt(style.borderLeftWidth, 10);
-    });
-  }),
+  /**
+    Fixed table columns set the wrapper width to the entire table width,
+    and are always positioned at 0,0.
+    @private
+  */
+  _setTableWidthAndPosition() {
+    let tableWidth = this.get('tableWidth');
+    let hasBeenSet = this.get('widthAndPositionSet');
+    if (tableWidth === 0 || hasBeenSet) {
+      return;
+    }
 
-  tableWidth: computed('columnWidths.[]', 'columnBorderWidths.[]', function tableWidth() {
-    let array = this.get('columnWidths').concat(this.get('columnBorderWidths'));
-    return Ember.String.htmlSafe(array.reduce((sum, item) => sum + item, 0));
-  }),
-
-  didRender() {
-    this._super(...arguments);
-    this._setTableWidth();
-  },
-
-  _setTableWidth() {
-    this.$('> table').css('width', `${this.get('tableWidth')}px`);
+    this.$().css('width', tableWidth);
+    this.set('widthAndPositionSet', true);
   },
 
   actions: {

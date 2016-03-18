@@ -70,7 +70,7 @@ export default Component.extend({
     @private
   */
   _ensureEqualHeaderHeight() {
-    let fixedHeader = this.$('.fixed-table-columns th:first-of-type');
+    let fixedHeader = this.$('.fixed-table-columns-wrapper th:first-of-type');
     if (isEmpty(fixedHeader)) {
       return;
     }
@@ -114,6 +114,20 @@ export default Component.extend({
       assert(`didRenderAction must be passed as a closure action. You passed ${didRenderAction}`, typeof didRenderAction === 'function');
       didRenderAction(this);
     }
+  },
+
+  /**
+    Returns the width of the fixed columns in this table. If there
+    are no fixed columns, returns 0;
+    @public
+  */
+  fixedColumnWidth() {
+    // TODO: register children explicitly and don't use child views.
+    let fixedColumnsComponent = this.get('childViews').find((view) => {
+      return view.classNames.contains('fixed-table-columns-wrapper');
+    });
+
+    return fixedColumnsComponent ? fixedColumnsComponent.get('tableWidth') : 0;
   },
 
   actions: {

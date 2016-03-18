@@ -16,7 +16,7 @@ const DEFAULT_ROW_HEIGHT = 37;
 
 export default Ember.Component.extend({
   layout,
-  classNames: ['table-columns'],
+  classNames: ['table-columns-wrapper'],
   values: {},
 
   /**
@@ -47,6 +47,39 @@ export default Ember.Component.extend({
     this._super(...arguments);
     this._allColumns = new A();
   },
+
+  /**
+    If the intiial width/position has been set after rendering.
+    @public
+  */
+  widthAndPositionSet: false,
+
+  /**
+    Returns the widths of columns in this set of table columns.
+    @public
+  */
+  columnWidths: computed.mapBy('columns', 'width'),
+
+  /**
+    Returns the widths of the column borders
+    @public
+  */
+  columnBorderWidths: computed('columns.[]', function columnBorderWidths() {
+    return this.get('columns').map((column) => {
+      let style = getComputedStyle(column.element);
+      return parseInt(style.borderRightWidth, 10) + parseInt(style.borderLeftWidth, 10);
+    });
+  }),
+
+  /**
+    Returns the width of the total width of this set of table columns,
+    including borders.
+    @public
+  */
+  tableWidth: computed('columnWidths.[]', 'columnBorderWidths.[]', function tableWidth() {
+    let array = this.get('columnWidths').concat(this.get('columnBorderWidths'));
+    return array.reduce((sum, item) => sum + item, 0);
+  }),
 
   /**
     Merged css classes to apply to table rows. Merges table.rowClasses and rowClasses.
@@ -121,6 +154,37 @@ export default Ember.Component.extend({
   didRender() {
     this._super(...arguments);
     this.get('table').didRenderCollection();
+    this._setTableWidthAndPosition();
+  },
+
+  didReceiveAttrs() {
+    // make sure we run width and position calculations again
+    this.set('widthAndPositionSet', false);
+  },
+
+  /**
+    Table columns set their width to the table width - fixed column
+    width.
+    @private
+  */
+  _setTableWidthAndPosition() {
+    let table = this.get('table');
+    let tableWidth = this.get('tableWidth');
+    let hasBeenSet = this.get('widthAndPositionSet');
+    if (tableWidth === 0 || hasBeenSet) {
+      return;
+    }
+
+    let fixedColumnWidth = table.fixedColumnWidth();
+    let width = table.$().width() - fixedColumnWidth;
+    let left = fixedColumnWidth;
+
+    this.$().css({
+      width,
+      left
+    });
+
+    this.set('widthAndPositionSet', true);
   },
 
   _onRowEnter() {
