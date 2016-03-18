@@ -116,6 +116,23 @@ export default Component.extend({
     }
   },
 
+  didReceiveAttrs() {
+    this._super(...arguments);
+    this.ensureEqualHeaderHeight();
+  },
+
+  didInsertElement() {
+    let columns = this.$('.table-columns');
+
+    columns.scroll((e) => {
+      columns.not(e.target).scrollTop(e.target.scrollTop);
+    });
+  },
+
+  willDestroyElement() {
+    this.$('.table-columns').off('scroll');
+  },
+
   /**
     Returns the width of the fixed columns in this table. If there
     are no fixed columns, returns 0;

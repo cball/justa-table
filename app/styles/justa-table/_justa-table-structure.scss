@@ -47,6 +47,7 @@
 
   .table-columns-wrapper {
     position: absolute;
+    z-index: 2;
   }
 
   .table-columns {
@@ -54,7 +55,23 @@
     height: 500px;
     max-height: 500px;
     position: relative;
+    background: white;
   }
+
+  .fixed-table-columns-wrapper {
+    z-index: 1;
+
+    // trick to hide the fixed-column scrollbar
+    .table-columns {
+      overflow-x: hidden;
+      margin-right: -14px;
+    }
+
+    table {
+      width: calc(100% - 14px);
+    }
+  }
+
 
   .fixed-table-columns {
     table {
