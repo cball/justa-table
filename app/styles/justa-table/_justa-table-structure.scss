@@ -40,7 +40,6 @@
   }
 
   table {
-    // float: left;
     width: 100%;
     table-layout: fixed;
   }
@@ -61,23 +60,21 @@
   .fixed-table-columns-wrapper {
     z-index: 1;
 
-    // trick to hide the fixed-column scrollbar
+    // hide the fixed-column scroll indicator
     .table-columns {
       overflow-x: hidden;
+      -ms-overflow-style: none;
       margin-right: -14px;
     }
 
+    .table-columns::-webkit-scrollbar {
+      display: none;
+      width: 0 !important;
+    }
+    // end hide scroll indicator
+
     table {
       width: calc(100% - 14px);
-    }
-  }
-
-
-  .fixed-table-columns {
-    table {
-      // we have to set this to something, choose default 1 column width.
-      // expected that fixed columns have set widths which will override this
-      // width: 100px;
     }
   }
 
