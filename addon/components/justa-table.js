@@ -122,6 +122,24 @@ export default Component.extend({
   },
 
   didInsertElement() {
+    this._setupListeners();
+  },
+
+  /**
+    Sets up scroll and resize listeners.
+    @private
+  */
+  _setupListeners() {
+    this._setupScrollListeners();
+    this._setupResizeListener();
+  },
+
+  /**
+    When columns are scrolled, scroll any other columns as well.
+    Keeps fixed columns in sync.
+    @private
+  */
+  _setupScrollListeners() {
     let columns = this.$('.table-columns');
 
     columns.scroll((e) => {
@@ -129,7 +147,22 @@ export default Component.extend({
     });
   },
 
+  /**
+    Rerenders the table on browser resize.
+    @private
+  */
+  _setupResizeListener() {
+    this._resizeHandler = () => {
+      this.rerender();
+    };
+
+    window.addEventListener('resize', this._resizeHandler, true);
+  },
+
   willDestroyElement() {
+    window.removeEventListener('resize', this._resizeHandler, true);
+    this._resizeHandler = null;
+
     this.$('.table-columns').off('scroll');
   },
 
