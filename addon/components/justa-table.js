@@ -91,7 +91,10 @@ export default Component.extend({
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
     let actualHeight = this.$('table').outerHeight();
-    this.$().height(Math.min(requestedHeight, actualHeight));
+    let totalHeight = Math.min(requestedHeight, actualHeight);
+
+    this.$().height(totalHeight);
+    this.$('.table-columns').height(totalHeight);
   },
 
   /**
