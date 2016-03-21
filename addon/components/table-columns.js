@@ -180,8 +180,11 @@ export default Ember.Component.extend({
     let left = fixedColumnWidth;
 
     this.$().css({
-      width,
       left
+    });
+
+    this.$('.table-columns').css({
+      width
     });
 
     this.set('widthAndPositionSet', true);
