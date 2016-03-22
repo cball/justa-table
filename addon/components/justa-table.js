@@ -13,7 +13,7 @@ const {
 export default Component.extend({
   layout,
   classNames: ['justa-table'],
-  classNameBindings: ['isLoading'],
+  classNameBindings: ['isLoading', 'stickyHeaders'],
 
   init() {
     this._super(...arguments);
@@ -90,7 +90,7 @@ export default Component.extend({
   */
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
-    let actualHeight = this.$('table').outerHeight();
+    let actualHeight = this.$('.table-columns table').outerHeight();
     let totalHeight = Math.min(requestedHeight, actualHeight);
 
     this.$().height(totalHeight);
@@ -125,6 +125,7 @@ export default Component.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
     this._setupListeners();
   },
 
