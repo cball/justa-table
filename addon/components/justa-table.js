@@ -74,7 +74,7 @@ export default Component.extend({
     if (isEmpty(fixedHeader)) {
       return;
     }
-    let columnHeader = this.$('.table-columns th:first-of-type');
+    let columnHeader = this.$('.table-columns-wrapper:not(.fixed-table-columns-wrapper) th:first-of-type');
     let maxHeight = Math.max(fixedHeader.height(), columnHeader.height());
 
     fixedHeader.height(maxHeight);
@@ -104,6 +104,7 @@ export default Component.extend({
   */
   didRenderCollection() {
     run.scheduleOnce('afterRender', this, this._sendRenderAction);
+    this.ensureEqualHeaderHeight();
   },
 
   /**
