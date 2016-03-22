@@ -70,7 +70,7 @@ export default Component.extend({
     @private
   */
   _ensureEqualHeaderHeight() {
-    let fixedHeader = this.$('.fixed-table-columns th:first-of-type');
+    let fixedHeader = this.$('.fixed-table-columns-wrapper th:first-of-type');
     if (isEmpty(fixedHeader)) {
       return;
     }
@@ -91,7 +91,10 @@ export default Component.extend({
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
     let actualHeight = this.$('table').outerHeight();
-    this.$().height(Math.min(requestedHeight, actualHeight));
+    let totalHeight = Math.min(requestedHeight, actualHeight);
+
+    this.$().height(totalHeight);
+    this.$('.table-columns').height(totalHeight);
   },
 
   /**
@@ -114,6 +117,70 @@ export default Component.extend({
       assert(`didRenderAction must be passed as a closure action. You passed ${didRenderAction}`, typeof didRenderAction === 'function');
       didRenderAction(this);
     }
+  },
+
+  didReceiveAttrs() {
+    this._super(...arguments);
+    this.ensureEqualHeaderHeight();
+  },
+
+  didInsertElement() {
+    this._setupListeners();
+  },
+
+  /**
+    Sets up scroll and resize listeners.
+    @private
+  */
+  _setupListeners() {
+    this._setupScrollListeners();
+    this._setupResizeListener();
+  },
+
+  /**
+    When columns are scrolled, scroll any other columns as well.
+    Keeps fixed columns in sync.
+    @private
+  */
+  _setupScrollListeners() {
+    let columns = this.$('.table-columns');
+
+    columns.scroll((e) => {
+      columns.not(e.target).scrollTop(e.target.scrollTop);
+    });
+  },
+
+  /**
+    Rerenders the table on browser resize.
+    @private
+  */
+  _setupResizeListener() {
+    this._resizeHandler = () => {
+      this.rerender();
+    };
+
+    window.addEventListener('resize', this._resizeHandler, true);
+  },
+
+  willDestroyElement() {
+    window.removeEventListener('resize', this._resizeHandler, true);
+    this._resizeHandler = null;
+
+    this.$('.table-columns').off('scroll');
+  },
+
+  /**
+    Returns the width of the fixed columns in this table. If there
+    are no fixed columns, returns 0;
+    @public
+  */
+  fixedColumnWidth() {
+    // TODO: register children explicitly and don't use child views.
+    let fixedColumnsComponent = this.get('childViews').find((view) => {
+      return view.classNames.contains('fixed-table-columns-wrapper');
+    });
+
+    return fixedColumnsComponent ? fixedColumnsComponent.get('tableWidth') : 0;
   },
 
   actions: {

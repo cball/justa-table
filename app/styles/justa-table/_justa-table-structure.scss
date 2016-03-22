@@ -1,12 +1,12 @@
 .justa-table {
-  position: relative;
-  display: inline-block;
   width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
   height: 500px;
-  max-height: 500px;
-  overflow: scroll;
+  position: relative;
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
 
   tr {
     height: 36px;
@@ -40,25 +40,41 @@
   }
 
   table {
-    float: left;
     width: 100%;
     table-layout: fixed;
   }
 
-  .table-columns {
-    overflow: auto;
-    // display: block;
-    // height: 500px;
-    // max-height: 500px;
-    // overflow: scroll;
-    // position: relative;
+  .table-columns-wrapper {
+    position: absolute;
+    z-index: 2;
   }
 
-  .fixed-table-columns {
+  .table-columns {
+    overflow-x: scroll;
+    height: 500px;
+    max-height: 500px;
+    position: relative;
+    background: white;
+  }
+
+  .fixed-table-columns-wrapper {
+    z-index: 1;
+
+    // hide the fixed-column scroll indicator
+    .table-columns {
+      overflow-x: hidden;
+      -ms-overflow-style: none;
+      margin-right: -14px;
+    }
+
+    .table-columns::-webkit-scrollbar {
+      display: none;
+      width: 0 !important;
+    }
+    // end hide scroll indicator
+
     table {
-      // we have to set this to something, choose default 1 column width.
-      // expected that fixed columns have set widths which will override this
-      // width: 100px;
+      width: calc(100% - 14px);
     }
   }
 

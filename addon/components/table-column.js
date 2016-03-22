@@ -107,10 +107,10 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     assert('Must use table column as a child of table-columns or fixed-table-columns.', this.get('table'));
-    run.scheduleOnce('actions', this, this._registerWithParent);
+    run.scheduleOnce('sync', this, this._registerWithParent);
 
     if (this.get('groupWithPriorRow')) {
-      run.scheduleOnce('actions', this, this._groupWithPriorRow);
+      run.scheduleOnce('sync', this, this._groupWithPriorRow);
     }
   },
 
