@@ -17,7 +17,15 @@
     background: none;
   }
 
-  .fixed-table-columns {
+  tr {
+    background: white;
+  }
+
+  .fixed-table-columns-wrapper {
+    tr {
+      background: none;
+    }
+
     tr:hover {
       background: none;
     }
