@@ -1,0 +1,44 @@
+{{#justa-table content=model stickyHeaders=true as |table|}}
+  {{#fixed-table-columns table=table as |row|}}
+    {{table-column
+      row=row
+      width=150
+      headerName='Name'
+      valueBindingPath='displayName'}}
+
+    {{table-column
+      row=row
+      width=250
+      headerName='Company'
+      valueBindingPath='company'}}
+  {{/fixed-table-columns}}
+
+  {{#table-columns table=table as |row|}}
+
+    {{table-column
+      row=row
+      width=550
+      headerName='Address'
+      resizable=true
+      valueBindingPath='address'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='City'
+      valueBindingPath='city'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='State'
+      valueBindingPath='state'}}
+
+    {{table-column
+      row=row
+      width=150
+      headerName='Zip'
+      valueBindingPath='zipCode'}}
+
+  {{/table-columns}}
+{{/justa-table}}

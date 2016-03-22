@@ -13,7 +13,6 @@ export default TableColumns.extend({
   init() {
     this._super(...arguments);
     assert('fixed columns cannot be resizable', !this.resizable);
-    // this.classNames = ['fixed-table-columns'];
   },
 
   /**
@@ -35,7 +34,6 @@ export default TableColumns.extend({
   actions: {
     columnWidthChanged() {
       this._super(...arguments);
-      this._setTableWidth();
     }
   }
 });

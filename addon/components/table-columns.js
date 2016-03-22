@@ -9,7 +9,8 @@ const {
   isEmpty,
   isNone,
   computed,
-  computed: { readOnly }
+  computed: { readOnly },
+  run: { scheduleOnce }
 } = Ember;
 
 const DEFAULT_ROW_HEIGHT = 37;
@@ -128,6 +129,7 @@ export default Ember.Component.extend({
     let columns = this.get('_allColumns');
     column.index = column.index || -1;
     columns.addObject(column);
+    scheduleOnce('afterRender', this, this._reflowStickyHeaders);
   },
 
   /**
@@ -139,27 +141,79 @@ export default Ember.Component.extend({
   unregisterColumn(column) {
     let allColumns = this.get('_allColumns');
     allColumns.removeObject(column);
+    scheduleOnce('afterRender', this, this._reflowStickyHeaders);
   },
 
   didInsertElement() {
+    this._setupStickyHeaders();
+
     this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
   },
 
+  /**
+    Installs the sticky headers plugin if the table should use it.
+    @private
+  */
+  _setupStickyHeaders() {
+    let usingStickyHeaders = this.get('table.stickyHeaders');
+
+    if (usingStickyHeaders) {
+      this.$('table').floatThead({
+        position: 'absolute',
+        scrollContainer($table) {
+          return $table.closest('.table-columns');
+        }
+      });
+    }
+  },
+
   willDestroyElement() {
+    this._uninstallStickyHeaders();
+
     this.$().off('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().off('mouseleave', 'tr', this._onRowLeave.bind(this));
+  },
+
+  /**
+    Removes the sticky headers plugin if this table uses it.
+    @private
+  */
+  _uninstallStickyHeaders() {
+    let usingStickyHeaders = this.get('table.stickyHeaders');
+
+    if (usingStickyHeaders) {
+      this.$('table').floatThead('destroy');
+    }
   },
 
   didRender() {
     this._super(...arguments);
     this.get('table').didRenderCollection();
+
+    if (!this.get('widthAndPositionSet')) {
+      this._reflowStickyHeaders();
+    }
+
     this._setTableWidthAndPosition();
   },
 
   didReceiveAttrs() {
+    this._super(...arguments);
     // make sure we run width and position calculations again
     this.set('widthAndPositionSet', false);
+  },
+
+  /**
+    If using sticky headers, call reflow on them.
+    @private
+  */
+  _reflowStickyHeaders() {
+    let usingStickyHeaders = this.get('table.stickyHeaders');
+
+    if (usingStickyHeaders) {
+      this.$('table').floatThead('reflow');
+    }
   },
 
   /**
@@ -190,8 +244,21 @@ export default Ember.Component.extend({
     this.set('widthAndPositionSet', true);
   },
 
+  /**
+    Adds a hover class to rows when hovered to keep fixed columns
+    and standard columns hover states in sync.
+    @private
+  */
   _onRowEnter() {
     let rowIndex = this.$('tr').index(this.$('tr:hover'));
+    let hasStickyHeaders = this.get('table.stickyHeaders');
+
+    // sticky headers creates a shell table, don't count that row
+    if (hasStickyHeaders) {
+      rowIndex = Math.max(0, rowIndex - 1);
+    }
+
+    this._onRowLeave();
     this.get('table').$(`tr.table-row:nth-of-type(${rowIndex})`).addClass('hover');
   },
 
@@ -224,7 +291,7 @@ export default Ember.Component.extend({
     },
 
     columnWidthChanged(/* column, newWidth */) {
-      // no-op
+      this._reflowStickyHeaders();
     }
   }
 });

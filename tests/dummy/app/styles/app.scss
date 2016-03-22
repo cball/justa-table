@@ -16,14 +16,8 @@ $icon-font-path: '/assets/bootstrap/';
 }
 
 .danger-cell {
-  animation: blink 1s step-end infinite;
-  background: #333;
+  background: #554339;
   color: white;
-}
-
-@keyframes blink {
-	0% {background-color: #802456}
-	50% {background-color: #554339}
 }
 
 .collapsable {
@@ -35,5 +29,11 @@ $icon-font-path: '/assets/bootstrap/';
 
   &.is-collapsed td:before {
     content: '👉';
+  }
+}
+
+.sticky-headers {
+  th {
+    background: rgb(238, 158, 31);
   }
 }
