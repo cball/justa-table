@@ -181,9 +181,10 @@ export default Ember.Component.extend({
   */
   _uninstallStickyHeaders() {
     let usingStickyHeaders = this.get('table.stickyHeaders');
+    let $table = this.$('table');
 
-    if (usingStickyHeaders) {
-      this.$('table').floatThead('destroy');
+    if (usingStickyHeaders && $table) {
+      $table.floatThead('destroy');
     }
   },
 
