@@ -54,7 +54,10 @@
     height: 500px;
     max-height: 500px;
     position: relative;
-    background: white;
+
+    tr {
+      background: white;
+    }
   }
 
   .fixed-table-columns-wrapper {
