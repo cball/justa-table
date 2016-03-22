@@ -211,8 +211,9 @@ export default Ember.Component.extend({
   */
   _reflowStickyHeaders() {
     let usingStickyHeaders = this.get('table.stickyHeaders');
+    let $table = this.$('table');
 
-    if (usingStickyHeaders) {
+    if (usingStickyHeaders && $table) {
       this.$('table').floatThead('reflow');
     }
   },
