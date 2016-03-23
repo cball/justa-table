@@ -129,7 +129,7 @@ export default Ember.Component.extend({
     let columns = this.get('_allColumns');
     column.index = column.index || -1;
     columns.addObject(column);
-    scheduleOnce('afterRender', this, this._reflowStickyHeaders);
+    scheduleOnce('afterRender', this, this.reflowStickyHeaders);
   },
 
   /**
@@ -141,7 +141,7 @@ export default Ember.Component.extend({
   unregisterColumn(column) {
     let allColumns = this.get('_allColumns');
     allColumns.removeObject(column);
-    scheduleOnce('afterRender', this, this._reflowStickyHeaders);
+    scheduleOnce('afterRender', this, this.reflowStickyHeaders);
   },
 
   didInsertElement() {
@@ -193,7 +193,7 @@ export default Ember.Component.extend({
     this.get('table').didRenderCollection();
 
     if (!this.get('widthAndPositionSet')) {
-      this._reflowStickyHeaders();
+      this.reflowStickyHeaders();
     }
 
     this._setTableWidthAndPosition();
@@ -209,7 +209,7 @@ export default Ember.Component.extend({
     If using sticky headers, call reflow on them.
     @private
   */
-  _reflowStickyHeaders() {
+  reflowStickyHeaders() {
     let usingStickyHeaders = this.get('table.stickyHeaders');
     let $table = this.$('table');
 
@@ -293,7 +293,7 @@ export default Ember.Component.extend({
     },
 
     columnWidthChanged(/* column, newWidth */) {
-      this._reflowStickyHeaders();
+      this.reflowStickyHeaders();
     }
   }
 });

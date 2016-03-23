@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import layout from '../templates/components/basic-header';
 
-const { computed } = Ember;
+const { computed, run } = Ember;
 
 export default Ember.Component.extend({
   layout,
@@ -13,6 +13,13 @@ export default Ember.Component.extend({
 
   column: null,
   resizable: computed.readOnly('column.resizable'),
+
+  didReceiveAttrs() {
+    this._super(...arguments);
+
+    let columns = this.get('parentView');
+    run.scheduleOnce('actions', columns, columns.reflowStickyHeaders);
+  },
 
   didRender() {
     this._setColumnWidth();
