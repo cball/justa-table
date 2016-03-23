@@ -18,7 +18,7 @@ export default Ember.Component.extend({
     this._super(...arguments);
 
     let columns = this.get('parentView');
-    run.scheduleOnce('actions', columns, columns._reflowStickyHeaders);
+    run.scheduleOnce('actions', columns, columns.reflowStickyHeaders);
   },
 
   didRender() {
