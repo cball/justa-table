@@ -14,7 +14,7 @@ const DEFAULT_ROW_HEIGHT = 37;
 export default Ember.Component.extend({
   layout,
   classNames: ['table-columns-wrapper'],
-  values: {},
+  columnType: 'standard',
 
   /**
     The parent table component, it is expected to be passed in.
@@ -42,6 +42,7 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
+    this.classNames.pushObject(`${this.columnType}-table-columns-wrapper`);
     this._allColumns = new A();
   },
 

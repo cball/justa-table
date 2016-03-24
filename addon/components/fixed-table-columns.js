@@ -8,7 +8,7 @@ const {
 
 export default TableColumns.extend({
   layout,
-  classNames: ['fixed-table-columns-wrapper'],
+  columnType: 'fixed',
 
   init() {
     this._super(...arguments);
