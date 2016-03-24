@@ -106,12 +106,13 @@ export default Component.extend({
     @private
   */
   _resizeTable() {
-    let requestedHeight = this.get('tableHeight');
-    let actualHeight = this.$('.table-columns table').outerHeight();
-    let totalHeight = Math.min(requestedHeight, actualHeight);
+    // TODO reenable with better height logic for tables without many rows
+    // let requestedHeight = this.get('tableHeight');
+    // let actualHeight = this.$('.table-columns table').outerHeight();
+    // let totalHeight = Math.min(requestedHeight, actualHeight);
 
-    this.$().height(totalHeight);
-    this.$('.table-columns').height(totalHeight);
+    // this.$().height(totalHeight);
+    // this.$('.table-columns').height(totalHeight);
   },
 
   /**
