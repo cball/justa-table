@@ -2,23 +2,29 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   model() {
-    return [
-      {
-        label: 'Happy Users',
-        isCollapsed: true,
-        data: []
-      },
-      {
-        label: 'Crazy Users',
-        isCollapsed: true,
-        data: []
-      },
-      {
-        label: 'Super Users',
-        isCollapsed: true,
-        data: []
-      }
-    ];
+    let users = [];
+
+    for (let i = 0; i < 30; i++) {
+      users = users.concat([
+        {
+          label: 'Happy Users',
+          isCollapsed: true,
+          data: []
+        },
+        {
+          label: 'Crazy Users',
+          isCollapsed: true,
+          data: []
+        },
+        {
+          label: 'Super Users',
+          isCollapsed: true,
+          data: []
+        }
+      ]);
+    }
+
+    return users;
   },
 
   actions: {

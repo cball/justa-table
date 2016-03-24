@@ -2,10 +2,6 @@
   margin-bottom: 1em;
   border: 1px solid #e5e5e5;
 
-  tr:hover, tr.hover {
-    background: #e9f7f7;
-  }
-
   th {
     border-right: 1px solid #666;
   }
@@ -19,6 +15,14 @@
 
   tr {
     background: white;
+
+    &.collapsable {
+      cursor: pointer;
+    }
+  }
+
+  tr:hover, tr.hover {
+    background: #e9f7f7;
   }
 
   .fixed-table-columns-wrapper {

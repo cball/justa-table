@@ -3,11 +3,7 @@ import layout from '../templates/components/table-columns';
 
 const {
   A,
-  get,
   getWithDefault,
-  set,
-  isEmpty,
-  isNone,
   computed,
   computed: { readOnly },
   run: { scheduleOnce }
@@ -89,6 +85,7 @@ export default Ember.Component.extend({
   mergedRowClasses: computed('table.rowClasses', 'rowClasses', function() {
     let tableClasses = this.get('table.rowClasses');
     let rowClasses = this.get('rowClasses');
+
     return new A([tableClasses, rowClasses]).compact().join(' ');
   }),
 
@@ -269,29 +266,6 @@ export default Ember.Component.extend({
   },
 
   actions: {
-    // TODO: move to collapse table
-    toggleRowCollapse(rowGroup) {
-      let collapsed = get(rowGroup, 'isCollapsed');
-
-      if (isNone(collapsed)) {
-        set(rowGroup, 'isCollapsed', false);
-      } else {
-        set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
-      }
-      // TODO make this smarter by taking option if we should do this
-      let rowData = get(rowGroup, this.get('rowGroupDataName'));
-      let shouldFetch = isEmpty(rowData) && !rowGroup.isCollapsed;
-
-      if (shouldFetch) {
-        set(rowGroup, 'loading', true);
-        this.attrs.onRowExpand(rowGroup).then((data) => {
-          set(rowGroup, this.get('rowGroupDataName'), rowData.concat(data));
-        }).finally(() => {
-          set(rowGroup, 'loading', false);
-        });
-      }
-    },
-
     columnWidthChanged(/* column, newWidth */) {
       this.reflowStickyHeaders();
     }
