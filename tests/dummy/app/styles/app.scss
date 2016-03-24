@@ -25,10 +25,15 @@ $icon-font-path: '/assets/bootstrap/';
 
   & td:before {
     content: '👇';
+    display: inline-block;
   }
 
   &.is-collapsed td:before {
     content: '👉';
+  }
+
+  &.is-loading td:before {
+    animation:spin 1s linear infinite;
   }
 }
 
@@ -37,3 +42,7 @@ $icon-font-path: '/assets/bootstrap/';
     background: rgb(238, 158, 31);
   }
 }
+
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { transform:rotate(360deg); } }

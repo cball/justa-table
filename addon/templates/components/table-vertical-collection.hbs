@@ -1,0 +1,19 @@
+{{#each _content key='@index' as |item index|}}
+  {{#table-vertical-item
+    itemTagName=itemTagName
+    class=itemClassNames
+    defaultHeight=defaultHeight
+    alwaysUseDefaultHeight=alwaysUseDefaultHeight
+    content=item
+    index=index
+    register=(action register)
+    unregister=(action unregister)
+    click=(action on-row-click item index)
+  }}
+    {{#if shouldRenderList}}
+      {{yield item index}}
+    {{/if}}
+  {{/table-vertical-item}}
+{{else}}
+  {{yield to="inverse"}}
+{{/each}}

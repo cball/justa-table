@@ -1,7 +1,10 @@
 import Ember from 'ember';
 import layout from '../templates/components/table-column';
+import Table from './justa-table';
+import TableColumns from './table-columns';
 
 const {
+  A,
   Component,
   computed,
   get,
@@ -19,15 +22,15 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
-  /**
-    Returns a valid table reference. Currently, collapsable and regular tables
-    have different parent implementations. For now, confine the private API mess
-    to a single place.
-    @public
-  */
-  table: computed('parentView', function() {
-    let table = get(this, 'parentView.parentView.parentView');
-    return table.get('registerColumn') ? table : get(this, 'parentView');
+
+  table: computed(function() {
+    // TODO: do without private function
+    return this.nearestOfType(Table);
+  }).volatile(),
+
+  columns: computed(function() {
+    // TODO: do without private function
+    return this.nearestOfType(TableColumns);
   }).volatile(),
 
   /**
@@ -72,9 +75,8 @@ export default Component.extend({
 
   blankCell: '',
 
-  shouldUseFakeRowspan: computed('useFakeRowspan', 'valueBindingPath', function() {
+  shouldUseFakeRowspan: computed('row', 'useFakeRowspan', 'valueBindingPath', function() {
     let { row, valueBindingPath } = getProperties(this, ['row', 'valueBindingPath']);
-
     if (!row || !valueBindingPath || get(this, 'hasBlock')) {
       return;
     }
@@ -108,6 +110,10 @@ export default Component.extend({
     this._super(...arguments);
     assert('Must use table column as a child of table-columns or fixed-table-columns.', this.get('table'));
     run.scheduleOnce('sync', this, this._registerWithParent);
+  },
+
+  didReceiveAttrs() {
+    this._super(...arguments);
 
     if (this.get('groupWithPriorRow')) {
       run.scheduleOnce('sync', this, this._groupWithPriorRow);
@@ -119,24 +125,27 @@ export default Component.extend({
     @private
   */
   _registerWithParent() {
-    let table = this.get('table');
-    table.registerColumn(this);
-    this.set('_registeredParent', table);
+    let tableColumns = this.get('columns');
+    tableColumns.registerColumn(this);
+    this.set('_registeredParent', tableColumns);
   },
 
   _groupWithPriorRow() {
+    let rows = new A(get(this, 'table.content'));
+    let currentRow = get(this, 'row');
+    let index = rows.indexOf(currentRow);
+    let previousRow = rows.objectAt(index - 1);
     let valueBindingPath = get(this, 'valueBindingPath');
-    let value = getWithDefault(this, `row.${valueBindingPath}`, '');
 
-    // vertical-item > vertical-collection > table-columns
-    // TODO replace with something better
-    let table = this.get('table');
-    let lastValue = table.get(`values.${valueBindingPath}`);
+    if (!previousRow) {
+      return;
+    }
 
-    if (value === lastValue) {
+    let previousValue = get(previousRow, valueBindingPath);
+    let currentValue = getWithDefault(this, `row.${valueBindingPath}`, '');
+
+    if (isEmpty(previousValue) || previousValue === currentValue) {
       this.set('valueBindingPath', 'blankCell');
-    } else {
-      table.set(`values.${valueBindingPath}`, value);
     }
   },
 

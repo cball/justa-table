@@ -2,11 +2,17 @@ import Ember from 'ember';
 import layout from '../templates/components/justa-table';
 
 const {
+  A,
   Component,
   run,
   isEmpty,
   RSVP,
   assert,
+  get,
+  getWithDefault,
+  set,
+  setProperties,
+  computed,
   computed: { empty }
 } = Ember;
 
@@ -17,10 +23,21 @@ export default Component.extend({
 
   init() {
     this._super(...arguments);
+
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
       this.attrs['on-load-more-rows'] = RSVP.resolve();
     }
+  },
+
+  /**
+    Adds a dynamic key based on rowGroupDataName that recomputes the
+    collapseTableData. Only adds the key if using a collapsable table.
+    @private
+  */
+  _addRowGroupDataNamePropertyKey() {
+    let rowGroupDataName = this.get('rowGroupDataName');
+    this.get('collapseTableData').property(`content.@each.${rowGroupDataName}`);
   },
 
   /**
@@ -185,7 +202,75 @@ export default Component.extend({
     return fixedColumnsComponent ? fixedColumnsComponent.get('tableWidth') : 0;
   },
 
+  collapseTableData: computed('content', function() {
+    if (!get(this, 'collapsable')) {
+      return;
+    }
+
+    let rows = new A(get(this, 'content')).toArray();
+    let rowGroupDataName = get(this, 'rowGroupDataName');
+    let formattedRows = new A();
+
+    for (let i = 0; i < get(rows, 'length'); i++) {
+      let row = rows[i];
+      let collapsed = getWithDefault(row, 'isCollapsed', true);
+
+      setProperties(row, {
+        isParent: true,
+        isCollapsed: collapsed
+      });
+
+      let children = new A(get(row, rowGroupDataName));
+      children.setEach('parent', row);
+
+      formattedRows.pushObject(row);
+
+      if (!collapsed) {
+        formattedRows.pushObjects(children);
+      }
+    }
+
+    return formattedRows;
+  }),
+
   actions: {
+    toggleRowCollapse(rowGroup) {
+      let isNotParent = !get(rowGroup, 'isParent');
+      if (isNotParent || !get(this, 'onRowExpand')) {
+        return;
+      }
+
+      let isCollapsed = get(rowGroup, 'isCollapsed');
+      let object = get(this, 'content').find((item) => {
+        return item === rowGroup;
+      });
+      let objectCollapsed = get(object, 'isCollapsed');
+
+      if (Ember.isNone(objectCollapsed)) {
+        set(object, 'isCollapsed', false);
+      } else {
+        set(object, 'isCollapsed', !objectCollapsed);
+      }
+
+      // TODO make this smarter by taking option if we should do this
+      isCollapsed = get(object, 'isCollapsed');
+      let rowData = get(object, this.get('rowGroupDataName'));
+      let shouldFetch = isEmpty(rowData) && !isCollapsed;
+
+      // TODO: avoid recomputing content when we just change part of it
+      if (shouldFetch) {
+        set(object, 'loading', true);
+        this.attrs.onRowExpand(object).then((data) => {
+          set(object, this.get('rowGroupDataName'), rowData.concat(data));
+          this.notifyPropertyChange('content');
+        }).finally(() => {
+          set(object, 'loading', false);
+        });
+      } else {
+        this.notifyPropertyChange('content');
+      }
+    },
+
     viewportEntered() {
       if (this.getAttr('on-load-more-rows')) {
         let returnValue = this.getAttr('on-load-more-rows');

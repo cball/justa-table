@@ -1,6 +1,7 @@
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
+import Ember from 'ember';
 
 moduleForComponent('justa-table', 'Integration | Component | justa table', {
   integration: true
@@ -250,9 +251,7 @@ test('title attribute can be customized', function(assert) {
 test('title attribute returns blank if invalid valueBindingPath', function(assert) {
   let content = [
     {
-      person: {
-        name: 'fred'
-      }
+      name: 'fred'
     }
   ];
 
@@ -272,5 +271,49 @@ test('title attribute returns blank if invalid valueBindingPath', function(asser
 
   return wait().then(() => {
     assert.equal(this.$('td[title=""]').length, 1, 'title attribute should be empty string');
+  });
+});
+
+test('adds a click listener to table rows', function(assert) {
+  assert.expect(2);
+
+  let done = assert.async();
+  let content = [
+    {
+      name: 'fred',
+      data: []
+    }
+  ];
+
+  this.setProperties({
+    content,
+    actions: {
+      foo() {
+        assert.ok(true, 'clicking a row should call action');
+        done();
+        return Ember.RSVP.Promise.resolve([]);
+      }
+    }
+  });
+
+  this.render(hbs`
+    {{#justa-table
+      content=content
+      collapsable=true
+      onRowExpand=(action 'foo') as |table|}}
+
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='foo'
+          valueBindingPath='name'}}
+
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+
+  return wait().then(() => {
+    assert.ok(this.$('.table-row').hasClass('collapsable'));
+    this.$('.table-row').click();
   });
 });
