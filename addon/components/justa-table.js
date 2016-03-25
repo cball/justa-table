@@ -122,7 +122,6 @@ export default Component.extend({
   */
   didRenderCollection() {
     run.scheduleOnce('afterRender', this, this._sendRenderAction);
-    this.ensureEqualHeaderHeight();
   },
 
   /**
@@ -166,8 +165,31 @@ export default Component.extend({
     let columns = this.$('.table-columns');
 
     columns.scroll((e) => {
+      this._setupStickyHeaders();
       columns.not(e.target).scrollTop(e.target.scrollTop);
     });
+  },
+
+  _setupStickyHeaders() {
+    let hasSetupStickyHeaders = this.get('hasSetupStickyHeaders');
+    if (hasSetupStickyHeaders) {
+      return;
+    }
+
+    let usingStickyHeaders = this.get('stickyHeaders');
+
+    if (usingStickyHeaders) {
+      this.set('hasSetupStickyHeaders', true);
+
+      window.requestAnimationFrame(() => {
+        this.$('table').floatThead({
+          position: 'absolute',
+          scrollContainer($table) {
+            return $table.closest('.table-columns');
+          }
+        });
+      });
+    }
   },
 
   /**

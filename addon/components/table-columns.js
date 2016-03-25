@@ -143,27 +143,8 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
-    this._setupStickyHeaders();
-
     this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
-  },
-
-  /**
-    Installs the sticky headers plugin if the table should use it.
-    @private
-  */
-  _setupStickyHeaders() {
-    let usingStickyHeaders = this.get('table.stickyHeaders');
-
-    if (usingStickyHeaders) {
-      this.$('table').floatThead({
-        position: 'absolute',
-        scrollContainer($table) {
-          return $table.closest('.table-columns');
-        }
-      });
-    }
   },
 
   willDestroyElement() {
@@ -250,16 +231,10 @@ export default Ember.Component.extend({
     @private
   */
   _onRowEnter() {
-    let rowIndex = this.$('tr').index(this.$('tr:hover'));
-    let hasStickyHeaders = this.get('table.stickyHeaders');
-
-    // sticky headers creates a shell table, don't count that row
-    if (hasStickyHeaders) {
-      rowIndex = Math.max(0, rowIndex - 1);
-    }
+    let rowIndex = this.$('tr.table-row').index(this.$('tr:hover'));
 
     this._onRowLeave();
-    this.get('table').$(`tr.table-row:nth-of-type(${rowIndex})`).addClass('hover');
+    this.get('table').$(`tr.table-row:nth-of-type(${rowIndex + 1})`).addClass('hover');
   },
 
   _onRowLeave() {
