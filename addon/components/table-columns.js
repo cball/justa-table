@@ -115,8 +115,28 @@ export default Ember.Component.extend({
       }
     });
 
+    let columnLength = this.get('_columnLength');
+    if (columnLength !== uniqueColumns.length) {
+      this.set('_columnLength', uniqueColumns.length);
+      scheduleOnce('afterRender', this, this.reflowStickyHeaders);
+
+      // jscs:disable requireCommentsToIncludeAccess
+      /**
+        TODO: replace floatThead with custom solution.
+        floatThead gets its positioning out of wack on adding columns. This
+        resets the standard column scroll position on column change, which
+        makes things line up properly.
+
+      */
+      scheduleOnce('afterRender', this, () => {
+        this.$('.table-columns').scrollLeft(0);
+      });
+    }
+
     return uniqueColumns.sortBy('index');
   }),
+
+  _columnLength: 0,
 
   /**
     Register a child column with this table columns wrapper.
@@ -127,7 +147,6 @@ export default Ember.Component.extend({
     let columns = this.get('_allColumns');
     column.index = column.index || -1;
     columns.addObject(column);
-    scheduleOnce('afterRender', this, this.reflowStickyHeaders);
   },
 
   /**
@@ -139,7 +158,6 @@ export default Ember.Component.extend({
   unregisterColumn(column) {
     let allColumns = this.get('_allColumns');
     allColumns.removeObject(column);
-    scheduleOnce('afterRender', this, this.reflowStickyHeaders);
   },
 
   didInsertElement() {
@@ -170,11 +188,6 @@ export default Ember.Component.extend({
   didRender() {
     this._super(...arguments);
     this.get('table').didRenderCollection();
-
-    if (!this.get('widthAndPositionSet')) {
-      this.reflowStickyHeaders();
-    }
-
     this._setTableWidthAndPosition();
   },
 
