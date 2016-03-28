@@ -55,6 +55,12 @@ export default Component.extend({
   paginate: false,
 
   /**
+    Use smoke-and-mirrors to hide elements not in-viewport
+    @public
+  */
+  hideOffscreenContent: true,
+
+  /**
     Css classes to apply to table rows.
     @public
   */
