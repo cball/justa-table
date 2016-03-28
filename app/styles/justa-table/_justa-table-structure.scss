@@ -51,6 +51,7 @@
 
   .table-columns {
     overflow-x: auto;
+    overflow-y: auto !important;
     height: 500px;
     max-height: 500px;
     position: relative;

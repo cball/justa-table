@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import layout from '../templates/components/justa-table';
+import InViewportMixin from 'ember-in-viewport/mixins/in-viewport';
 
 const {
   A,
@@ -14,13 +15,15 @@ const {
   set,
   setProperties,
   computed,
-  computed: { empty }
+  computed: { empty },
+  inject: { service }
 } = Ember;
 
-export default Component.extend({
+export default Component.extend(InViewportMixin, {
   layout,
   classNames: ['justa-table'],
   classNameBindings: ['isLoading', 'stickyHeaders', 'isWindows'],
+  browser: service(),
 
   init() {
     this._super(...arguments);
@@ -29,16 +32,6 @@ export default Component.extend({
     if (!onLoadMoreRowsAction) {
       this.attrs['on-load-more-rows'] = RSVP.resolve();
     }
-  },
-
-  /**
-    Adds a dynamic key based on rowGroupDataName that recomputes the
-    collapseTableData. Only adds the key if using a collapsable table.
-    @private
-  */
-  _addRowGroupDataNamePropertyKey() {
-    let rowGroupDataName = this.get('rowGroupDataName');
-    this.get('collapseTableData').property(`content.@each.${rowGroupDataName}`);
   },
 
   /**
@@ -72,6 +65,16 @@ export default Component.extend({
     @public
   */
   rowGroupDataName: 'data',
+
+  /**
+    Adds a dynamic key based on rowGroupDataName that recomputes the
+    collapseTableData. Only adds the key if using a collapsable table.
+    @private
+  */
+  _addRowGroupDataNamePropertyKey() {
+    let rowGroupDataName = this.get('rowGroupDataName');
+    this.get('collapseTableData').property(`content.@each.${rowGroupDataName}`);
+  },
 
   /**
     Ensure header heights are equal. Schedules after render to ensure it's
@@ -218,6 +221,7 @@ export default Component.extend({
             return $table.closest('.table-columns');
           }
         });
+        this.didEnterViewport();
       });
     }
   },
@@ -285,6 +289,18 @@ export default Component.extend({
 
     return formattedRows;
   }),
+
+  didEnterViewport() {
+    let isWindows = this.get('isWindows');
+    let { browser } = this.get('browser.browserInfo');
+
+    if (isWindows && browser === 'chrome') {
+      let height = this.$().height() + Math.round(Math.random() * 10);
+      Ember.run.next(() => {
+        this.set('containerSize', height);
+      });
+    }
+  },
 
   actions: {
     toggleRowCollapse(rowGroup) {
