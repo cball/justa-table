@@ -12,41 +12,53 @@
       </tr>
     </thead>
 
-    {{#if table.collapsable}}
-      {{#table-vertical-collection
-        tagName="tbody"
-        itemClassNames=(concat 'table-row ' mergedRowClasses)
-        content=table.collapseTableData
-        defaultHeight=rowHeight
-        bufferSize=0.5
-        alwaysUseDefaultHeight=true
-        containerSelector=".table-columns"
-        on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
+    {{#if table.hideOffscreenContent}}
+      {{#if table.collapsable}}
+        {{#table-vertical-collection
+          tagName="tbody"
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          content=table.collapseTableData
+          defaultHeight=rowHeight
+          bufferSize=0.5
+          alwaysUseDefaultHeight=true
+          containerSelector=".table-columns"
+          on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
 
-        {{#if row.label}}
-          <td colspan={{columns.length}} class="table-cell">
-            {{row.label}}
-          </td>
-        {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+          {{#if row.label}}
+            <td colspan={{columns.length}} class="table-cell">
+              {{row.label}}
+            </td>
+          {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+            {{yield row}}
+          {{/if}}
+
+        {{/table-vertical-collection}}
+      {{else}}
+        {{#vertical-collection
+          tagName="tbody"
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          content=table.content
+          containerSize=containerSize
+          defaultHeight=rowHeight
+          bufferSize=0.5
+          alwaysUseDefaultHeight=true
+          containerSelector=".table-columns"
+          as |row|}}
+
           {{yield row}}
-        {{/if}}
 
-      {{/table-vertical-collection}}
+        {{/vertical-collection}}
+      {{/if}}
+
     {{else}}
-      {{#vertical-collection
-        tagName="tbody"
-        itemClassNames=(concat 'table-row ' mergedRowClasses)
-        content=table.content
-        containerSize=containerSize
-        defaultHeight=rowHeight
-        bufferSize=0.5
-        alwaysUseDefaultHeight=true
-        containerSelector=".table-columns"
-        as |row|}}
 
-        {{yield row}}
+      {{#each table.content as |row|}}
+        <tr class="table-row {{mergedRowClasses}}" style={{rowHeightStyle}}>
+          {{yield row}}
+        </tr>
+      {{/each}}
 
-      {{/vertical-collection}}
     {{/if}}
+
   </table>
 </div>

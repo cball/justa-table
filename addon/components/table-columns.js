@@ -106,6 +106,10 @@ export default Ember.Component.extend({
     return getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
   }),
 
+  rowHeightStyle: computed('rowHeight', function() {
+    return Ember.String.htmlSafe(`height: ${this.get(rowHeight)}px;`);
+  }),
+
   /**
     Keeps track of all unique columns. Used to render the th's of the table.
     Uniques on header name.
