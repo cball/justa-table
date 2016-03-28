@@ -40,6 +40,13 @@ export default Ember.Component.extend({
   */
   rowGroupDataName: readOnly('table.rowGroupDataName'),
 
+  /**
+    Setting this property will force smoke and mirrors to recompute viewport
+    boundries. Initially used after the table width is set.
+    @public
+  */
+  containerSize: null,
+
   init() {
     this._super(...arguments);
     this.classNames.pushObject(`${this.columnType}-table-columns-wrapper`);
@@ -236,6 +243,7 @@ export default Ember.Component.extend({
     });
 
     this.set('widthAndPositionSet', true);
+    this.set('containerSize', width);
   },
 
   /**
