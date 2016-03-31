@@ -1,51 +1,53 @@
 <div class="table-columns">
-  <table class="table">
-    <thead>
-      <tr>
-        {{#each columns as |column|}}
-          {{component column.headerComponent
-            table=table
-            column=column
-            class=column.headerClassNames
-            onColumnWidthChange=(action 'columnWidthChanged')}}
-        {{/each}}
-      </tr>
-    </thead>
+  <div class="scroll-buffer">
+    <table class="table">
+      <thead>
+        <tr>
+          {{#each columns as |column|}}
+            {{component column.headerComponent
+              table=table
+              column=column
+              class=column.headerClassNames
+              onColumnWidthChange=(action 'columnWidthChanged')}}
+          {{/each}}
+        </tr>
+      </thead>
 
-    {{#if table.collapsable}}
-      {{#table-vertical-collection
-        tagName="tbody"
-        itemClassNames=(concat 'table-row ' mergedRowClasses)
-        content=table.collapseTableData
-        defaultHeight=rowHeight
-        bufferSize=0.5
-        alwaysUseDefaultHeight=true
-        containerSelector=".table-columns"
-        on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
+      {{#if table.collapsable}}
+        {{#table-vertical-collection
+          tagName="tbody"
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          content=table.collapseTableData
+          defaultHeight=rowHeight
+          bufferSize=0.5
+          alwaysUseDefaultHeight=true
+          containerSelector=".table-columns"
+          on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
 
-        {{#if row.label}}
-          <td colspan={{columns.length}} class="table-cell">
-            {{row.label}}
-          </td>
-        {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+          {{#if row.label}}
+            <td colspan={{columns.length}} class="table-cell">
+              {{row.label}}
+            </td>
+          {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+            {{yield row}}
+          {{/if}}
+
+        {{/table-vertical-collection}}
+      {{else}}
+        {{#vertical-collection
+          tagName="tbody"
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          content=table.content
+          defaultHeight=rowHeight
+          bufferSize=0.5
+          alwaysUseDefaultHeight=true
+          containerSelector=".table-columns"
+          as |row|}}
+
           {{yield row}}
-        {{/if}}
 
-      {{/table-vertical-collection}}
-    {{else}}
-      {{#vertical-collection
-        tagName="tbody"
-        itemClassNames=(concat 'table-row ' mergedRowClasses)
-        content=table.content
-        defaultHeight=rowHeight
-        bufferSize=0.5
-        alwaysUseDefaultHeight=true
-        containerSelector=".table-columns"
-        as |row|}}
-
-        {{yield row}}
-
-      {{/vertical-collection}}
-    {{/if}}
-  </table>
+        {{/vertical-collection}}
+      {{/if}}
+    </table>
+  </div>
 </div>
