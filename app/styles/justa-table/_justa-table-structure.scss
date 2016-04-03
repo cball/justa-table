@@ -70,14 +70,6 @@
       margin-right: -15px;
     }
 
-    /*
-      Unfortunately, this is necessary to fix sizing issues between fixed/non-fixed
-      columns on windows.
-    */
-    .scroll-buffer {
-      padding-bottom: 16px;
-    }
-
     .table-columns::-webkit-scrollbar {
       display: none;
       width: 0 !important;
@@ -107,4 +99,12 @@
     top: 0;
     right: 0;
   }
+}
+
+/*
+  Unfortunately, this is necessary to fix sizing issues between fixed/non-fixed
+  columns on windows.
+*/
+.is-windows .fixed-table-columns-wrapper .scroll-buffer {
+  padding-bottom: 16px;
 }
