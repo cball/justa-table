@@ -6,6 +6,7 @@ const {
   Component,
   run,
   isEmpty,
+  isPresent,
   RSVP,
   assert,
   get,
@@ -19,7 +20,7 @@ const {
 export default Component.extend({
   layout,
   classNames: ['justa-table'],
-  classNameBindings: ['isLoading', 'stickyHeaders'],
+  classNameBindings: ['isLoading', 'stickyHeaders', 'isWindows'],
 
   init() {
     this._super(...arguments);
@@ -114,6 +115,18 @@ export default Component.extend({
     // this.$().height(totalHeight);
     // this.$('.table-columns').height(totalHeight);
   },
+
+  /**
+    Windows machines need slightly different css for scrollable containers.
+    Returns a boolean that is applied as a classNameBinding to the justa-table
+    div.
+    @public
+  */
+  isWindows: computed(function() {
+    let hasWindowsString = navigator.userAgent.match(/Windows/i);
+
+    return isPresent(hasWindowsString);
+  }),
 
   /**
     Queues sending 'didRenderTable' action. This is called once the columns
