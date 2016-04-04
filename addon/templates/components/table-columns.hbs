@@ -18,8 +18,9 @@
           tagName="tbody"
           itemClassNames=(concat 'table-row ' mergedRowClasses)
           content=table.collapseTableData
+          containerSize=table.containerSize
           defaultHeight=rowHeight
-          bufferSize=0.5
+          bufferSize=1
           alwaysUseDefaultHeight=true
           containerSelector=".table-columns"
           on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
@@ -38,8 +39,9 @@
           tagName="tbody"
           itemClassNames=(concat 'table-row ' mergedRowClasses)
           content=table.content
+          containerSize=table.containerSize
           defaultHeight=rowHeight
-          bufferSize=0.5
+          bufferSize=1
           alwaysUseDefaultHeight=true
           containerSelector=".table-columns"
           as |row|}}
