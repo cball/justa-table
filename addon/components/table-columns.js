@@ -157,7 +157,9 @@ export default Ember.Component.extend({
   */
   unregisterColumn(column) {
     let allColumns = this.get('_allColumns');
-    allColumns.removeObject(column);
+    if (allColumns) {
+      allColumns.removeObject(column);
+    }
   },
 
   didInsertElement() {
@@ -167,6 +169,7 @@ export default Ember.Component.extend({
 
   willDestroyElement() {
     this._uninstallStickyHeaders();
+    this.set('_allColumns', null);
 
     this.$().off('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().off('mouseleave', 'tr', this._onRowLeave.bind(this));

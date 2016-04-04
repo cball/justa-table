@@ -162,5 +162,6 @@ export default Component.extend({
   */
   _unregisterWithParent(parent) {
     parent.unregisterColumn(this);
+    this.set('_registeredParent', null);
   }
 });
