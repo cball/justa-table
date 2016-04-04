@@ -104,6 +104,14 @@ export default Component.extend(InViewportMixin, {
     this._resizeTable();
   },
 
+  columnWidthsChanged() {
+    run.scheduleOnce('sync', this, this._reflowStickyHeaders);
+  },
+
+  _reflowStickyHeaders() {
+    this.$('table').floatThead('reflow');
+  },
+
   /**
     Sets the table height before rendering. If the height of the rows is less
     than the specified tableHeight, it will resize.
