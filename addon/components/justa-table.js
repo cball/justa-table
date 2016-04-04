@@ -128,6 +128,23 @@ export default Component.extend({
     return isPresent(hasWindowsString);
   }),
 
+  content: computed({
+    get() {
+      return this.get('_content');
+    },
+    set(key, value) {
+      this.set('_content', value);
+      run.scheduleOnce('afterRender', this, this._scrollToTop);
+      return value;
+    }
+  }),
+
+  _content: null,
+
+  _scrollToTop() {
+    this.$('.table-columns').scrollTop(0, 0);
+  },
+
   /**
     Queues sending 'didRenderTable' action. This is called once the columns
     have rendered data.
