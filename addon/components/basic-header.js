@@ -15,9 +15,15 @@ export default Ember.Component.extend({
   resizable: computed.readOnly('column.resizable'),
 
   didRender() {
+    let table = this.get('table');
     this._setColumnWidth();
-    this.getAttr('table').ensureEqualHeaderHeight();
+    table.ensureEqualHeaderHeight();
   },
+
+  updateColumnWidths: Ember.observer('column.width', function() {
+    let table = this.get('table');
+    table.columnWidthsChanged();
+  }),
 
   _setColumnWidth() {
     const width = this.get('column.width');
