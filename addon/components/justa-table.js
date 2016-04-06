@@ -118,13 +118,22 @@ export default Component.extend(InViewportMixin, {
     @private
   */
   _resizeTable() {
-    // TODO reenable with better height logic for tables without many rows
-    // let requestedHeight = this.get('tableHeight');
-    // let actualHeight = this.$('.table-columns table').outerHeight();
-    // let totalHeight = Math.min(requestedHeight, actualHeight);
+    let requestedHeight = this.get('tableHeight');
+    let actualHeight = this.$('.table-columns table').outerHeight();
+    let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
+    let isWindows = this.get('isWindows');
 
-    // this.$().height(totalHeight);
-    // this.$('.table-columns').height(totalHeight);
+    if (isWindows) {
+      totalHeight = totalHeight + 16;
+    }
+
+    this.$().height(totalHeight);
+    // windows does not respect the height set, so it needs a 2px buffer
+    this.$('.table-columns').height(isWindows ? totalHeight + 2 : totalHeight);
+
+    run.next(() => {
+      this.set('containerSize', totalHeight);
+    });
   },
 
   /**
@@ -178,14 +187,26 @@ export default Component.extend(InViewportMixin, {
     }
   },
 
-  didReceiveAttrs() {
+  didReceiveAttrs(attrs) {
     this._super(...arguments);
     this.ensureEqualHeaderHeight();
+
+    if (this._didContentLengthChange(attrs)) {
+      this._resizeTable();
+    }
+  },
+
+  _didContentLengthChange(attrs) {
+    let oldLength = get(attrs, 'oldAttrs.content.value.length');
+    let newLength = get(attrs, 'newAttrs.content.value.length');
+
+    return oldLength && oldLength !== newLength;
   },
 
   didInsertElement() {
     this._super(...arguments);
     this._setupListeners();
+    this._resizeTable();
   },
 
   /**
@@ -304,7 +325,7 @@ export default Component.extend(InViewportMixin, {
 
     if (isWindows && browser === 'chrome') {
       let height = this.$().height() + Math.round(Math.random() * 10);
-      Ember.run.next(() => {
+      run.next(() => {
         this.set('containerSize', height);
       });
     }
