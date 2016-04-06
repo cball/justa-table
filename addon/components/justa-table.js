@@ -19,6 +19,8 @@ const {
   inject: { service }
 } = Ember;
 
+const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
+
 export default Component.extend(InViewportMixin, {
   layout,
   classNames: ['justa-table'],
@@ -122,18 +124,26 @@ export default Component.extend(InViewportMixin, {
     let actualHeight = this.$('.table-columns table').outerHeight();
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
+    let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
 
-    if (isWindows) {
-      totalHeight = totalHeight + 16;
+    if (shouldAddHeightBuffer) {
+      totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
     }
 
     this.$().height(totalHeight);
-    // windows does not respect the height set, so it needs a 2px buffer
-    this.$('.table-columns').height(isWindows ? totalHeight + 2 : totalHeight);
+    // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
+    this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
 
     run.next(() => {
       this.set('containerSize', totalHeight);
     });
+  },
+
+  _hasHorizontalScroll() {
+    let tableWidth = this.$('.standard-table-columns-wrapper table').outerWidth();
+    let containerWidth = this.$('.standard-table-columns-wrapper .table-columns').outerWidth();
+
+    return tableWidth > containerWidth;
   },
 
   /**
