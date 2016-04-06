@@ -1,5 +1,9 @@
 # Justa-Table Changelog
 
+### 0.2.1 (April 6, 2016)
+
+- [#74](https://github.com/cball/justa-table/pull/74) [BUGFIX] Only add scrollbar height to tables if needed (WIN + has horizontal scrollbar).
+
 ### 0.2.0 (April 6, 2016)
 
 - [#72](https://github.com/cball/justa-table/pull/72) [FEATURE] Reduce size of table when the height of all rows < `tableHeight`.
