@@ -14,26 +14,44 @@
       </thead>
 
       {{#if table.collapsable}}
-        {{#table-vertical-collection
-          tagName="tbody"
-          itemClassNames=(concat 'table-row ' mergedRowClasses)
-          content=table.collapseTableData
-          containerSize=table.containerSize
-          defaultHeight=rowHeight
-          bufferSize=1
-          alwaysUseDefaultHeight=true
-          containerSelector=".table-columns"
-          on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
+        {{#if table.hideOffscreenContent}}
+          {{#table-vertical-collection
+            tagName="tbody"
+            itemClassNames=(concat 'table-row ' mergedRowClasses)
+            content=table.collapseTableData
+            containerSize=table.containerSize
+            defaultHeight=rowHeight
+            bufferSize=1
+            alwaysUseDefaultHeight=true
+            containerSelector=".table-columns"
+            on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
 
-          {{#if row.label}}
-            <td colspan={{columns.length}} class="table-cell">
-              {{row.label}}
-            </td>
-          {{else if (or row.isParent (not row.parent.IsCollapsed))}}
-            {{yield row}}
-          {{/if}}
+            {{#if row.label}}
+              <td colspan={{columns.length}} class="table-cell">
+                {{row.label}}
+              </td>
+            {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+              {{yield row}}
+            {{/if}}
 
-        {{/table-vertical-collection}}
+          {{/table-vertical-collection}}
+        {{else}}
+          <tbody>
+            {{#each table.collapseTableData as |row index|}}
+              <tr class="table-row {{mergedRowClasses}} {{if (eq row.isParent true) 'collapsable'}} {{if (eq row.isCollapsed true) 'is-collapsed' 'is-expanded'}} {{if row.loading 'is-loading'}}" style={{table.rowHeightStyle}} {{action 'toggleRowCollapse' row index target=table}}>
+                {{#if row.label}}
+                  <td colspan={{columns.length}} class="table-cell">
+                    {{row.label}}
+                  </td>
+                {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+                  {{#if (and (gte index topRowIndex) (lte index bottomRowIndex))}}
+                    {{yield row}}
+                  {{/if}}
+                {{/if}}
+              </tr>
+            {{/each}}
+          </tbody>
+        {{/if}}
       {{else}}
         {{#if table.hideOffscreenContent}}
           {{#vertical-collection

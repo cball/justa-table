@@ -141,7 +141,7 @@ export default Component.extend(InViewportMixin, {
 
     this.$().height(totalHeight);
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
-    this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
+    // this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
   },
 
   _hasHorizontalScroll() {
@@ -240,11 +240,11 @@ export default Component.extend(InViewportMixin, {
     @private
   */
   _setupScrollListeners() {
-    let columns = this.$('.table-columns');
+    let columns = this.$();
 
-    columns.scroll((e) => {
+    columns.scroll(() => {
       this._setupStickyHeaders();
-      columns.not(e.target).scrollTop(e.target.scrollTop);
+      // columns.not(e.target).scrollTop(e.target.scrollTop);
       run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
     });
   },
@@ -292,7 +292,7 @@ export default Component.extend(InViewportMixin, {
   */
   _updateVisibleRowIndexes() {
     window.requestAnimationFrame(() => {
-      let columnDiv = this.$('.standard-table-columns-wrapper .table-columns');
+      let columnDiv = this.$();
       let scrollTop = !columnDiv || columnDiv.length === 0 ? 0 : columnDiv.scrollTop();
       let rowHeight = this.get('rowHeight');
       let visibleRowCount = this.get('visibleRowCount');
