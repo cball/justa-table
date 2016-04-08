@@ -40,6 +40,9 @@ export default Ember.Component.extend({
   */
   rowGroupDataName: readOnly('table.rowGroupDataName'),
 
+  topRowIndex: readOnly('table.topRowIndex'),
+  bottomRowIndex: readOnly('table.bottomRowIndex'),
+
   init() {
     this._super(...arguments);
     this.classNames.pushObject(`${this.columnType}-table-columns-wrapper`);

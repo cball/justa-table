@@ -20,6 +20,7 @@ const {
 } = Ember;
 
 const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
+const DEFAULT_ROW_HEIGHT = 37;
 
 export default Component.extend(InViewportMixin, {
   layout,
@@ -29,6 +30,7 @@ export default Component.extend(InViewportMixin, {
 
   init() {
     this._super(...arguments);
+    this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -77,6 +79,13 @@ export default Component.extend(InViewportMixin, {
     let rowGroupDataName = this.get('rowGroupDataName');
     this.get('collapseTableData').property(`content.@each.${rowGroupDataName}`);
   },
+
+  /**
+    If we should hide out of viewport content using smoke and mirrors
+    @public
+    @default false
+  */
+  hideOffscreenContent: false,
 
   /**
     Ensure header heights are equal. Schedules after render to ensure it's
@@ -133,10 +142,6 @@ export default Component.extend(InViewportMixin, {
     this.$().height(totalHeight);
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
-
-    run.next(() => {
-      this.set('containerSize', totalHeight);
-    });
   },
 
   _hasHorizontalScroll() {
@@ -200,6 +205,7 @@ export default Component.extend(InViewportMixin, {
   didReceiveAttrs(attrs) {
     this._super(...arguments);
     this.ensureEqualHeaderHeight();
+    this._updateVisibleRowIndexes();
 
     if (this._didContentLengthChange(attrs)) {
       this._resizeTable();
@@ -239,6 +245,7 @@ export default Component.extend(InViewportMixin, {
     columns.scroll((e) => {
       this._setupStickyHeaders();
       columns.not(e.target).scrollTop(e.target.scrollTop);
+      run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
     });
   },
 
@@ -266,6 +273,41 @@ export default Component.extend(InViewportMixin, {
   },
 
   /**
+    Determines the visible row count based on row height, table height, and
+    containerSize.
+    @public
+  */
+  visibleRowCount: computed('rowHeight', 'tableHeight', 'content.length', 'containerSize', function() {
+    let rowHeight = this.get('rowHeight');
+    let { tableHeight, containerSize } = this.getProperties('tableHeight', 'containerSize');
+    let shouldUseTableHeight = isEmpty(containerSize) || containerSize === 0;
+    let height = shouldUseTableHeight ? tableHeight : containerSize;
+
+    return Math.ceil(height / rowHeight) * 1.5;
+  }),
+
+  /**
+    Sets topRowIndex and bottomRowIndex based on what is in the viewport.
+    @private
+  */
+  _updateVisibleRowIndexes() {
+    window.requestAnimationFrame(() => {
+      let columnDiv = this.$('.standard-table-columns-wrapper .table-columns');
+      let scrollTop = !columnDiv || columnDiv.length === 0 ? 0 : columnDiv.scrollTop();
+      let rowHeight = this.get('rowHeight');
+      let visibleRowCount = this.get('visibleRowCount');
+      let topRowIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 1);
+      let bottomRowIndex = topRowIndex + visibleRowCount;
+
+      // TODO: move to model
+      this.setProperties({
+        topRowIndex,
+        bottomRowIndex
+      });
+    });
+  },
+
+  /**
     Rerenders the table on browser resize.
     @private
   */
@@ -283,6 +325,13 @@ export default Component.extend(InViewportMixin, {
 
     this.$('.table-columns').off('scroll');
   },
+
+  rowHeightStyle: computed('rowHeight', function() {
+    let rowHeight = getWithDefault(this, 'rowHeight', DEFAULT_ROW_HEIGHT).toString();
+    rowHeight = rowHeight.replace(/px/, '');
+
+    return new Ember.Handlebars.SafeString(`height: ${rowHeight}px;`);
+  }),
 
   /**
     Returns the width of the fixed columns in this table. If there
