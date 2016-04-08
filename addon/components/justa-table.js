@@ -21,11 +21,11 @@ const {
 
 const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
 const DEFAULT_ROW_HEIGHT = 37;
+const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
 export default Component.extend(InViewportMixin, {
   layout,
-  classNames: ['justa-table'],
-  classNameBindings: ['isLoading', 'stickyHeaders', 'isWindows'],
+  classNames: ['justa-table-wrapper'],
   browser: service(),
 
   init() {
@@ -81,11 +81,20 @@ export default Component.extend(InViewportMixin, {
   },
 
   /**
-    If we should hide out of viewport content using smoke and mirrors
+    If we should hide out of viewport content (vertical only for now).
+    TODO: make this true and rip out S&M.
     @public
     @default false
   */
   hideOffscreenContent: false,
+
+  /**
+    The amount of additonal rows to load on top/bottom of the viewport when
+    hiding offscreen content. Will round up/down to the nearest row.
+    @public
+    @default 0.5
+  */
+  offscreenContentBufferSize: DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE,
 
   /**
     Ensure header heights are equal. Schedules after render to ensure it's
@@ -119,9 +128,9 @@ export default Component.extend(InViewportMixin, {
     run.scheduleOnce('sync', this, this._reflowStickyHeaders);
   },
 
-  _reflowStickyHeaders() {
-    this.$('table').floatThead('reflow');
-  },
+  // _reflowStickyHeaders() {
+  //   this.$('table').floatThead('reflow');
+  // },
 
   /**
     Sets the table height before rendering. If the height of the rows is less
@@ -135,11 +144,11 @@ export default Component.extend(InViewportMixin, {
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
 
-    if (shouldAddHeightBuffer) {
+    if (false) {
       totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
     }
 
-    this.$().height(totalHeight);
+    this.$('justa-table').height(totalHeight);
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     // this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
   },
@@ -177,7 +186,7 @@ export default Component.extend(InViewportMixin, {
   _content: null,
 
   _scrollToTop() {
-    this.$('.table-columns').scrollTop(0, 0);
+    this.$('.justa-table').scrollTop(0, 0);
   },
 
   /**
@@ -212,17 +221,21 @@ export default Component.extend(InViewportMixin, {
     }
   },
 
+  didInsertElement() {
+    this._super(...arguments);
+    this._setupListeners();
+    this._resizeTable();
+  },
+
+  /**
+    Returns true if the content length has changed (rows added/removed)
+    @private
+  */
   _didContentLengthChange(attrs) {
     let oldLength = get(attrs, 'oldAttrs.content.value.length');
     let newLength = get(attrs, 'newAttrs.content.value.length');
 
     return oldLength && oldLength !== newLength;
-  },
-
-  didInsertElement() {
-    this._super(...arguments);
-    this._setupListeners();
-    this._resizeTable();
   },
 
   /**
@@ -240,37 +253,38 @@ export default Component.extend(InViewportMixin, {
     @private
   */
   _setupScrollListeners() {
-    let columns = this.$();
+    let table = this.$('.justa-table');
 
-    columns.scroll(() => {
-      this._setupStickyHeaders();
+    table.scroll(() => {
+      // this._setupStickyHeaders();
       // columns.not(e.target).scrollTop(e.target.scrollTop);
-      run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
+      // run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
+      run.debounce(this, this._updateVisibleRowIndexes, 20);
     });
   },
 
-  _setupStickyHeaders() {
-    let hasSetupStickyHeaders = this.get('hasSetupStickyHeaders');
-    if (hasSetupStickyHeaders) {
-      return;
-    }
-
-    let usingStickyHeaders = this.get('stickyHeaders');
-
-    if (usingStickyHeaders) {
-      this.set('hasSetupStickyHeaders', true);
-
-      window.requestAnimationFrame(() => {
-        this.$('table').floatThead({
-          position: 'absolute',
-          scrollContainer($table) {
-            return $table.closest('.table-columns');
-          }
-        });
-        this.didEnterViewport();
-      });
-    }
-  },
+  // _setupStickyHeaders() {
+  //   let hasSetupStickyHeaders = this.get('hasSetupStickyHeaders');
+  //   if (hasSetupStickyHeaders) {
+  //     return;
+  //   }
+  //
+  //   let usingStickyHeaders = this.get('stickyHeaders');
+  //
+  //   if (usingStickyHeaders) {
+  //     this.set('hasSetupStickyHeaders', true);
+  //
+  //     window.requestAnimationFrame(() => {
+  //       this.$('table').floatThead({
+  //         position: 'absolute',
+  //         scrollContainer($table) {
+  //           return $table.closest('.justa-table');
+  //         }
+  //       });
+  //       this.didEnterViewport();
+  //     });
+  //   }
+  // },
 
   /**
     Determines the visible row count based on row height, table height, and
@@ -279,11 +293,11 @@ export default Component.extend(InViewportMixin, {
   */
   visibleRowCount: computed('rowHeight', 'tableHeight', 'content.length', 'containerSize', function() {
     let rowHeight = this.get('rowHeight');
-    let { tableHeight, containerSize } = this.getProperties('tableHeight', 'containerSize');
+    let { tableHeight, containerSize, offscreenContentBufferSize } = this.getProperties('tableHeight', 'containerSize', 'offscreenContentBufferSize');
     let shouldUseTableHeight = isEmpty(containerSize) || containerSize === 0;
     let height = shouldUseTableHeight ? tableHeight : containerSize;
 
-    return Math.ceil(height / rowHeight) * 1.5;
+    return Math.ceil(height / rowHeight * (1 + offscreenContentBufferSize));
   }),
 
   /**
@@ -292,16 +306,16 @@ export default Component.extend(InViewportMixin, {
   */
   _updateVisibleRowIndexes() {
     window.requestAnimationFrame(() => {
-      let columnDiv = this.$();
+      let columnDiv = this.$('.justa-table');
       let scrollTop = !columnDiv || columnDiv.length === 0 ? 0 : columnDiv.scrollTop();
-      let rowHeight = this.get('rowHeight');
-      let visibleRowCount = this.get('visibleRowCount');
-      let topRowIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 1);
+      let { rowHeight, visibleRowCount, offscreenContentBufferSize } = this.getProperties('rowHeight', 'visibleRowCount', 'offscreenContentBufferSize');
+      let topRowIndex = Math.floor(scrollTop / rowHeight);
+      let bufferedTopRowIndex = Math.max(0, topRowIndex - Math.floor(topRowIndex * offscreenContentBufferSize));
       let bottomRowIndex = topRowIndex + visibleRowCount;
 
       // TODO: move to model
       this.setProperties({
-        topRowIndex,
+        topRowIndex: bufferedTopRowIndex,
         bottomRowIndex
       });
     });

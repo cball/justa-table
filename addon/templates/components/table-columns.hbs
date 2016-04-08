@@ -43,6 +43,7 @@
                   <td colspan={{columns.length}} class="table-cell">
                     {{row.label}}
                   </td>
+                {{!-- TODO: in-range helper  --}}
                 {{else if (or row.isParent (not row.parent.IsCollapsed))}}
                   {{#if (and (gte index topRowIndex) (lte index bottomRowIndex))}}
                     {{yield row}}
@@ -72,7 +73,8 @@
           <tbody>
             {{#each table.content as |row index|}}
               <tr class={{concat 'table-row ' mergedRowClasses}} style={{table.rowHeightStyle}}>
-                {{#if (and (gte index topRowIndex) (lte index bottomRowIndex))}}
+                {{!-- TODO: roll up helper --}}
+                {{#if (lte index bottomRowIndex)}}
                   {{yield row}}
                 {{/if}}
               </tr>

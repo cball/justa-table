@@ -3,6 +3,7 @@
   height: 500px;
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
 
   table {
     border-collapse: collapse;
@@ -107,6 +108,6 @@
   Unfortunately, this is necessary to fix sizing issues between fixed/non-fixed
   columns on windows.
 */
-.is-windows .fixed-table-columns-wrapper .scroll-buffer {
-  padding-bottom: 16px;
-}
+// .is-windows .fixed-table-columns-wrapper .scroll-buffer {
+//   padding-bottom: 16px;
+// }
