@@ -231,10 +231,10 @@ export default Ember.Component.extend({
 
     let fixedColumnWidth = table.fixedColumnWidth();
     let width = table.$().width() - fixedColumnWidth;
-    let left = fixedColumnWidth;
+    let paddingLeft = fixedColumnWidth;
 
     this.$().css({
-      left
+      paddingLeft
     });
 
     this.$('.table-columns').css({

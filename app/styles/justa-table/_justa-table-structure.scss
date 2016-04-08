@@ -1,9 +1,15 @@
+.justa-table-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
 .justa-table {
   width: 100%;
   height: 500px;
-  position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  // position: relative;
+  // overflow-y: auto;
+  // overflow-x: hidden;
+  overflow: auto;
 
   table {
     border-collapse: collapse;
@@ -47,16 +53,20 @@
   }
 
   .table-columns-wrapper {
-    position: absolute;
-    z-index: 2;
+    // position: absolute;
+    // z-index: 2;
   }
 
   .table-columns {
-    overflow-x: auto;
+    // overflow-x: auto;
     // overflow-y: auto !important;
     // height: 500px;
     // max-height: 500px;
-    position: relative;
+    // position: relative;
+
+    table {
+      width: 100%;
+    }
 
     tr {
       background: white;
@@ -65,23 +75,12 @@
 
   .fixed-table-columns-wrapper {
     z-index: 1;
-
-    // hide the fixed-column scroll indicator
-    .table-columns {
-      overflow-x: hidden;
-      -ms-overflow-style: none;
-      margin-right: -15px;
-    }
-
-    .table-columns::-webkit-scrollbar {
-      display: none;
-      width: 0 !important;
-    }
-    // end hide scroll indicator
-
-    table {
-      width: calc(100% - 15px);
-    }
+    width: 579px;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+    position: absolute;
+    transform: translateY(0px);
   }
 
   .is-collapsed {

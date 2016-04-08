@@ -255,7 +255,10 @@ export default Component.extend(InViewportMixin, {
   _setupScrollListeners() {
     let table = this.$('.justa-table');
 
-    table.scroll(() => {
+    table.scroll((e) => {
+      let top = e.target.scrollTop;
+      this.$('.fixed-table-columns-wrapper').css('transform', `translateY(-${top}px)`);
+
       // this._setupStickyHeaders();
       // columns.not(e.target).scrollTop(e.target.scrollTop);
       // run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
