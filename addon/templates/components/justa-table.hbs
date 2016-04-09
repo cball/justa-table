@@ -1,9 +1,11 @@
-{{#if noContent}}
-  <h2>No Content</h2>
-{{else}}
-  {{yield this}}
-{{/if}}
+<div class="justa-table {{if table.isLoading 'isLoading'}} {{if table.stickyHeaders 'stickyHeaders'}} {{if table.isWindows 'is-windows'}}">
+  {{#if noContent}}
+    <h2>No Content</h2>
+  {{else}}
+    {{yield this}}
+  {{/if}}
 
-{{#if paginate}}
-  {{in-viewport-checker on-enter-viewport=(action 'viewportEntered')}}
-{{/if}}
+  {{#if paginate}}
+    {{in-viewport-checker on-enter-viewport=(action 'viewportEntered')}}
+  {{/if}}
+</div>

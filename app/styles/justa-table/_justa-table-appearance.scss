@@ -1,6 +1,11 @@
-.justa-table {
+.justa-table-wrapper {
   margin-bottom: 1em;
   border: 1px solid #e5e5e5;
+}
+.justa-table {
+  table {
+    background: #fff;
+  }
 
   th {
     border-right: 1px solid #666;

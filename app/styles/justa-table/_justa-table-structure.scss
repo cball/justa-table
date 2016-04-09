@@ -1,7 +1,16 @@
+.justa-table-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
 .justa-table {
   width: 100%;
   height: 500px;
-  position: relative;
+  // position: relative;
+  // overflow-y: auto;
+  // overflow-x: hidden;
+  overflow: auto;
 
   table {
     border-collapse: collapse;
@@ -45,16 +54,21 @@
   }
 
   .table-columns-wrapper {
-    position: absolute;
-    z-index: 2;
+    // position: absolute;
+    // z-index: 2;
+    // overflow: hidden;
   }
 
   .table-columns {
-    overflow-x: auto;
-    overflow-y: auto !important;
-    height: 500px;
-    max-height: 500px;
-    position: relative;
+    // overflow-x: auto;
+    // overflow-y: auto !important;
+    // height: 500px;
+    // max-height: 500px;
+    // position: relative;
+
+    table {
+      width: 100%;
+    }
 
     tr {
       background: white;
@@ -63,23 +77,13 @@
 
   .fixed-table-columns-wrapper {
     z-index: 1;
-
-    // hide the fixed-column scroll indicator
-    .table-columns {
-      overflow-x: hidden;
-      -ms-overflow-style: none;
-      margin-right: -15px;
-    }
-
-    .table-columns::-webkit-scrollbar {
-      display: none;
-      width: 0 !important;
-    }
-    // end hide scroll indicator
-
-    table {
-      width: calc(100% - 15px);
-    }
+    width: 30%;
+    top: 0px;
+    left: 0px;
+    overflow: hidden;
+    position: absolute;
+    transform: translateY(0px);
+    // padding-bottom: 15px;
   }
 
   .is-collapsed {
@@ -106,6 +110,6 @@
   Unfortunately, this is necessary to fix sizing issues between fixed/non-fixed
   columns on windows.
 */
-.is-windows .fixed-table-columns-wrapper .scroll-buffer {
-  padding-bottom: 16px;
-}
+// .is-windows .fixed-table-columns-wrapper .scroll-buffer {
+//   padding-bottom: 16px;
+// }
