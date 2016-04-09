@@ -19,7 +19,8 @@ const {
   inject: { service }
 } = Ember;
 
-const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
+// TODO: actually measure this
+const HORIZONTAL_SCROLLBAR_HEIGHT = 16;
 const DEFAULT_ROW_HEIGHT = 37;
 const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
@@ -139,25 +140,27 @@ export default Component.extend(InViewportMixin, {
   */
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
-    let actualHeight = this.$('.table-columns table').outerHeight();
+    let actualHeight = this.$('.standard-table-columns-wrapper table').outerHeight();
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
+    let adjustedHeight = totalHeight;
 
-    if (false) {
-      totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
+    if (shouldAddHeightBuffer) {
+      adjustedHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
     }
 
-    this.$('justa-table').height(totalHeight);
+    this.$('.justa-table').height(adjustedHeight);
+    this.$('.fixed-table-columns-wrapper').height(totalHeight);
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     // this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
   },
 
   _hasHorizontalScroll() {
     let tableWidth = this.$('.standard-table-columns-wrapper table').outerWidth();
-    let containerWidth = this.$('.standard-table-columns-wrapper .table-columns').outerWidth();
+    let containerWidth = this.$('.standard-table-columns-wrapper').outerWidth();
 
-    return tableWidth > containerWidth;
+    return containerWidth > tableWidth;
   },
 
   /**
@@ -245,6 +248,7 @@ export default Component.extend(InViewportMixin, {
   _setupListeners() {
     this._setupScrollListeners();
     this._setupResizeListener();
+    this._setupWheelListener();
   },
 
   /**
@@ -257,12 +261,29 @@ export default Component.extend(InViewportMixin, {
 
     table.scroll((e) => {
       let top = e.target.scrollTop;
-      this.$('.fixed-table-columns-wrapper').css('transform', `translateY(-${top}px)`);
+      // this.$('.fixed-table-columns-wrapper').css('transform', `translateY(-${top}px)`);
+      this.$('.fixed-table-columns-wrapper').scrollTop(top);
 
       // this._setupStickyHeaders();
       // columns.not(e.target).scrollTop(e.target.scrollTop);
       // run.scheduleOnce('sync', this, this._updateVisibleRowIndexes);
       run.debounce(this, this._updateVisibleRowIndexes, 20);
+    });
+  },
+
+  _setupWheelListener() {
+    let table = this.$('.justa-table');
+    table.bind('wheel', (event) => {
+      // TODO: jquery.mousewheel to help normalize scrolling?
+      let newScrollTop = table.scrollTop() + event.originalEvent.deltaY;
+      let newScrollLeft = table.scrollLeft() + event.originalEvent.deltaX;
+
+      table.scrollTop(newScrollTop);
+      table.scrollLeft(newScrollLeft);
+
+      // TODO: firefox needs this or we cant scroll fixed columns
+      event.preventDefault();
+      // event.stopImmediatePropagation();
     });
   },
 

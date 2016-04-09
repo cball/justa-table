@@ -1,6 +1,7 @@
 .justa-table-wrapper {
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
 .justa-table {
@@ -55,6 +56,7 @@
   .table-columns-wrapper {
     // position: absolute;
     // z-index: 2;
+    // overflow: hidden;
   }
 
   .table-columns {
@@ -75,12 +77,13 @@
 
   .fixed-table-columns-wrapper {
     z-index: 1;
-    width: 579px;
+    width: 30%;
     top: 0px;
     left: 0px;
     overflow: hidden;
     position: absolute;
     transform: translateY(0px);
+    // padding-bottom: 15px;
   }
 
   .is-collapsed {

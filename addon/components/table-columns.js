@@ -166,11 +166,13 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
     this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
   },
 
   willDestroyElement() {
+    this._super(...arguments);
     this._uninstallStickyHeaders();
     this.set('_allColumns', null);
 
