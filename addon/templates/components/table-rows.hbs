@@ -1,0 +1,15 @@
+{{#each content as |item index|}}
+  {{#table-row
+    rowHeight=rowHeight
+    content=item
+    index=index
+    class=itemClassNames
+    register=(action register)
+    unregister=(action unregister)
+    table=table}}
+
+    {{yield item index}}
+  {{/table-row}}
+{{else}}
+  {{yield to="inverse"}}
+{{/each}}

@@ -6,7 +6,7 @@ const {
   getWithDefault,
   computed,
   computed: { readOnly },
-  run: { scheduleOnce }
+  run
 } = Ember;
 
 const DEFAULT_ROW_HEIGHT = 37;
@@ -39,6 +39,9 @@ export default Ember.Component.extend({
     @public
   */
   rowGroupDataName: readOnly('table.rowGroupDataName'),
+
+  topRowIndex: readOnly('table.topRowIndex'),
+  bottomRowIndex: readOnly('table.bottomRowIndex'),
 
   init() {
     this._super(...arguments);
@@ -120,7 +123,7 @@ export default Ember.Component.extend({
     let columnLength = this.get('_columnLength');
     if (columnLength !== uniqueColumns.length) {
       this.set('_columnLength', uniqueColumns.length);
-      scheduleOnce('afterRender', this, this.reflowStickyHeaders);
+      run.scheduleOnce('afterRender', this, this.reflowStickyHeaders);
 
       // jscs:disable requireCommentsToIncludeAccess
       /**
@@ -130,7 +133,7 @@ export default Ember.Component.extend({
         makes things line up properly.
 
       */
-      scheduleOnce('afterRender', this, () => {
+      run.scheduleOnce('afterRender', this, () => {
         this.$('.table-columns').scrollLeft(0);
       });
     }
@@ -165,11 +168,13 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
     this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
   },
 
   willDestroyElement() {
+    this._super(...arguments);
     this._uninstallStickyHeaders();
     this.set('_allColumns', null);
 
@@ -192,7 +197,9 @@ export default Ember.Component.extend({
 
   didRender() {
     this._super(...arguments);
-    this.get('table').didRenderCollection();
+    run.next(() => {
+      this.get('table').didRenderCollection();
+    });
     this._setTableWidthAndPosition();
   },
 
@@ -230,10 +237,10 @@ export default Ember.Component.extend({
 
     let fixedColumnWidth = table.fixedColumnWidth();
     let width = table.$().width() - fixedColumnWidth;
-    let left = fixedColumnWidth;
+    let paddingLeft = fixedColumnWidth;
 
     this.$().css({
-      left
+      paddingLeft
     });
 
     this.$('.table-columns').css({

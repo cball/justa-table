@@ -1,0 +1,7 @@
+{{#if shouldRender}}
+  {{yield}}
+{{else}}
+  {{#each tableColumns.columns as |column|}}
+    <td>&nbsp;</td>
+  {{/each}}
+{{/if}}

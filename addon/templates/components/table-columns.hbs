@@ -14,27 +14,33 @@
       </thead>
 
       {{#if table.collapsable}}
-        <tbody>
-          {{#each table.collapseTableData as |row index|}}
-            <tr class="table-row {{mergedRowClasses}} {{if (eq row.isParent true) 'collapsable'}} {{if (eq row.isCollapsed true) 'is-collapsed' 'is-expanded'}} {{if row.loading 'is-loading'}}" style={{rowHeight}} {{action 'toggleRowCollapse' row index target=table}}>
-              {{#if row.label}}
-                <td colspan={{columns.length}} class="table-cell">
-                  {{row.label}}
-                </td>
-              {{else if (or row.isParent (not row.parent.IsCollapsed))}}
-                {{yield row}}
-              {{/if}}
-            </tr>
-          {{/each}}
-        </tbody>
+        {{#collapsable-table-rows
+          content=table.collapseTableData
+          hideOffscreenContent=table.hideOffscreenContent
+          rowHeight=rowHeight
+          table=table
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          as |row|}}
+
+          {{#if row.label}}
+            <td colspan={{columns.length}} class="table-cell">
+              {{row.label}}
+            </td>
+          {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+            {{yield row}}
+          {{/if}}
+        {{/collapsable-table-rows}}
       {{else}}
-        <tbody>
-          {{#each table.content as |row index|}}
-            <tr class={{concat 'table-row ' mergedRowClasses}} style={{rowHeight}}>
-              {{yield row}}
-            </tr>
-          {{/each}}
-        </tbody>
+        {{#table-rows
+          content=table.content
+          hideOffscreenContent=table.hideOffscreenContent
+          rowHeight=rowHeight
+          table=table
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          as |row|}}
+
+          {{yield row}}
+        {{/table-rows}}
       {{/if}}
     </table>
   </div>

@@ -150,6 +150,7 @@ export default Component.extend({
   },
 
   willDestroyElement() {
+    this._super(...arguments);
     let parent = this.get('_registeredParent');
     if (parent) {
       run.scheduleOnce('actions', this, this._unregisterWithParent, parent);

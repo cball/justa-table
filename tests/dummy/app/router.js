@@ -15,6 +15,7 @@ Router.map(function() {
     this.route('collapsable-table-with-ajax');
     this.route('group-by-name');
     this.route('sticky-headers');
+    this.route('hide-offscreen');
   });
 });
 
