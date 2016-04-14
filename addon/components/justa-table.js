@@ -34,7 +34,7 @@ export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
     this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
-    this.set('_rowManagers', []);
+    this.set('_rowManagers', new A([]));
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -184,7 +184,10 @@ export default Component.extend(InViewportMixin, {
     },
     set(key, value) {
       this.set('_content', value);
-      run.scheduleOnce('afterRender', this, this._scrollToTop);
+
+      if (!this.get('isDestroying') && !this.get('isDestroyed')) {
+        run.scheduleOnce('afterRender', this, this._scrollToTop);
+      }
       return value;
     }
   }),
@@ -292,10 +295,12 @@ export default Component.extend(InViewportMixin, {
     containerSize.
     @public
   */
-  visibleRowCount: computed('rowHeight', 'tableHeight', 'content.length', 'containerSize', function() {
+  visibleRowCount: computed('rowHeight', 'tableHeight', 'content.length', 'collapseTableData.length', 'containerSize', function() {
     let hideOffscreenContent = this.get('hideOffscreenContent');
+    let collapsable = this.get('collapsable');
+
     if (!hideOffscreenContent) {
-      return this.get('content.length');
+      return collapsable ? this.get('collapseTableData.length') : this.get('content.length');
     }
 
     let rowHeight = this.get('rowHeight');
@@ -308,10 +313,14 @@ export default Component.extend(InViewportMixin, {
 
   getVisibleRowIndexes() {
     let hideOffscreenContent = this.get('hideOffscreenContent');
+    let collapsable = this.get('collapsable');
+
     if (!hideOffscreenContent) {
+      let bottomRowIndex = collapsable ? this.get('collapseTableData.length') : this.get('content.length');
+
       return {
         topRowIndex: 0,
-        bottomRowIndex: this.get('content.length')
+        bottomRowIndex
       };
     }
 
@@ -348,12 +357,15 @@ export default Component.extend(InViewportMixin, {
       this.set('hasSetupStickyHeaders', true);
 
       requestAnimationFrame(() => {
-        this.$('table').floatThead({
-          position: 'absolute',
-          scrollContainer($table) {
-            return $table.closest('.table-columns');
-          }
-        });
+        let table = this.$('table');
+        if (table) {
+          table.floatThead({
+            position: 'absolute',
+            scrollContainer($table) {
+              return $table.closest('.table-columns');
+            }
+          });
+        }
         this.didEnterViewport();
       });
     }
@@ -374,6 +386,7 @@ export default Component.extend(InViewportMixin, {
   willDestroyElement() {
     window.removeEventListener('resize', this._resizeHandler, true);
     this._resizeHandler = null;
+    this._content = null;
 
     this.$('.table-columns').off('scroll');
     this.$().off('wheel');
@@ -426,7 +439,7 @@ export default Component.extend(InViewportMixin, {
 
   didEnterViewport() {
     let isWindows = this.get('isWindows');
-    let { browser } = this.get('browser.browserInfo');
+    let browser = this.get('browser.browserInfo.browser');
 
     if (isWindows && browser === 'chrome') {
       let height = this.$().height() + Math.round(Math.random() * 10);
@@ -476,6 +489,8 @@ export default Component.extend(InViewportMixin, {
       } else {
         this.notifyPropertyChange('content');
       }
+
+      this.get('_rowManagers').invoke('scheduleChildrenUpdate');
     },
 
     viewportEntered() {

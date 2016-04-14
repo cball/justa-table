@@ -256,6 +256,9 @@ export default Ember.Component.extend({
     @private
   */
   _onRowEnter() {
+    if (this.get('isDestroying') || this.get('isDestroyed')) {
+      return;
+    }
     let rowIndex = this.$('tr.table-row').index(this.$('tr:hover'));
 
     this._onRowLeave();
@@ -263,6 +266,10 @@ export default Ember.Component.extend({
   },
 
   _onRowLeave() {
+    if (this.get('isDestroying') || this.get('isDestroyed')) {
+      return;
+    }
+
     this.get('table').$('tr').removeClass('hover');
   },
 

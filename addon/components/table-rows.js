@@ -7,7 +7,7 @@ const {
   get
 } = Ember;
 
-export default Ember.Component.extend({
+export default Component.extend({
   layout,
   tagName: 'tbody',
   content: null,
@@ -85,7 +85,8 @@ export default Ember.Component.extend({
   },
 
   _destroyCollection() {
-    this.set('content', null);
+    // TODO: reimplement with _content in order to fully clear it out on destroy?
+    // this.set('content', null);
     this.set('_children', null);
     this.get('table').unregisterRowManager(this);
   },
