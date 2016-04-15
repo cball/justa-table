@@ -1,5 +1,13 @@
 # Justa-Table Changelog
 
+### Master
+
+- [#79](https://github.com/cball/justa-table/pull/79)
+  - Replace smoke and mirrors with simpler solution.
+  - Make hideOffscreenContent configurable.
+  - Use wheel listener to scroll fixed columns instead of having a double scrollbar.
+  - Use Chrome only for testing.
+
 ### 0.2.1 (April 6, 2016)
 
 - [#74](https://github.com/cball/justa-table/pull/74) [BUGFIX] Only add scrollbar height to tables if needed (WIN + has horizontal scrollbar).
