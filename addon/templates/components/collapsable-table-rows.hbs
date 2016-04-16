@@ -1,0 +1,16 @@
+{{#each content as |item index|}}
+  {{#collapsable-table-row
+    rowHeight=rowHeight
+    content=item
+    index=index
+    class=itemClassNames
+    register=(action register)
+    unregister=(action unregister)
+    table=table
+    click=(action 'toggleRowCollapse' item index target=table)}}
+
+    {{yield item index}}
+  {{/collapsable-table-row}}
+{{else}}
+  {{yield to="inverse"}}
+{{/each}}

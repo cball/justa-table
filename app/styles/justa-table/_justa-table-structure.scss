@@ -46,12 +46,11 @@
 
   .table-columns-wrapper {
     position: absolute;
-    z-index: 2;
+    z-index: 1;
   }
 
   .table-columns {
-    overflow-x: auto;
-    overflow-y: auto !important;
+    overflow: auto;
     height: 500px;
     max-height: 500px;
     position: relative;
@@ -62,23 +61,10 @@
   }
 
   .fixed-table-columns-wrapper {
-    z-index: 1;
+    z-index: 2;
 
-    // hide the fixed-column scroll indicator
     .table-columns {
-      overflow-x: hidden;
-      -ms-overflow-style: none;
-      margin-right: -15px;
-    }
-
-    .table-columns::-webkit-scrollbar {
-      display: none;
-      width: 0 !important;
-    }
-    // end hide scroll indicator
-
-    table {
-      width: calc(100% - 15px);
+      overflow: hidden;
     }
   }
 

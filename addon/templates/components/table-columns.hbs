@@ -14,16 +14,13 @@
       </thead>
 
       {{#if table.collapsable}}
-        {{#table-vertical-collection
-          tagName="tbody"
-          itemClassNames=(concat 'table-row ' mergedRowClasses)
+        {{#collapsable-table-rows
           content=table.collapseTableData
-          containerSize=table.containerSize
-          defaultHeight=rowHeight
-          bufferSize=1
-          alwaysUseDefaultHeight=true
-          containerSelector=".table-columns"
-          on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
+          hideOffscreenContent=table.hideOffscreenContent
+          rowHeight=rowHeight
+          table=table
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
+          as |row|}}
 
           {{#if row.label}}
             <td colspan={{columns.length}} class="table-cell">
@@ -32,23 +29,18 @@
           {{else if (or row.isParent (not row.parent.IsCollapsed))}}
             {{yield row}}
           {{/if}}
-
-        {{/table-vertical-collection}}
+        {{/collapsable-table-rows}}
       {{else}}
-        {{#vertical-collection
-          tagName="tbody"
-          itemClassNames=(concat 'table-row ' mergedRowClasses)
+        {{#table-rows
           content=table.content
-          containerSize=table.containerSize
-          defaultHeight=rowHeight
-          bufferSize=1
-          alwaysUseDefaultHeight=true
-          containerSelector=".table-columns"
+          hideOffscreenContent=table.hideOffscreenContent
+          rowHeight=rowHeight
+          table=table
+          itemClassNames=(concat 'table-row ' mergedRowClasses)
           as |row|}}
 
           {{yield row}}
-
-        {{/vertical-collection}}
+        {{/table-rows}}
       {{/if}}
     </table>
   </div>

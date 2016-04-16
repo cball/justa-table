@@ -19,16 +19,22 @@ const {
   inject: { service }
 } = Ember;
 
-const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
+// TODO: actually measure this
+const HORIZONTAL_SCROLLBAR_HEIGHT = 16;
+const DEFAULT_ROW_HEIGHT = 37;
+const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
 export default Component.extend(InViewportMixin, {
   layout,
   classNames: ['justa-table'],
   classNameBindings: ['isLoading', 'stickyHeaders', 'isWindows'],
   browser: service(),
+  _rowManagers: null,
 
   init() {
     this._super(...arguments);
+    this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
+    this.set('_rowManagers', new A([]));
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -79,6 +85,22 @@ export default Component.extend(InViewportMixin, {
   },
 
   /**
+    If we should hide out of viewport content (vertical only for now).
+    TODO: make this true and rip out S&M.
+    @public
+    @default false
+  */
+  hideOffscreenContent: false,
+
+  /**
+    The amount of additonal rows to load on top/bottom of the viewport when
+    hiding offscreen content. Will round up/down to the nearest row.
+    @public
+    @default 0.5
+  */
+  offscreenContentBufferSize: DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE,
+
+  /**
     Ensure header heights are equal. Schedules after render to ensure it's
     called once per table.
     @public
@@ -121,7 +143,7 @@ export default Component.extend(InViewportMixin, {
   */
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
-    let actualHeight = this.$('.table-columns table').outerHeight();
+    let actualHeight = this.$('.standard-table-columns-wrapper .table-columns table').outerHeight();
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
@@ -134,9 +156,7 @@ export default Component.extend(InViewportMixin, {
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
 
-    run.next(() => {
-      this.set('containerSize', totalHeight);
-    });
+    run.next(() => this.set('containerSize', totalHeight));
   },
 
   _hasHorizontalScroll() {
@@ -164,7 +184,10 @@ export default Component.extend(InViewportMixin, {
     },
     set(key, value) {
       this.set('_content', value);
-      run.scheduleOnce('afterRender', this, this._scrollToTop);
+
+      if (!this.get('isDestroying') && !this.get('isDestroyed')) {
+        run.scheduleOnce('afterRender', this, this._scrollToTop);
+      }
       return value;
     }
   }),
@@ -206,6 +229,10 @@ export default Component.extend(InViewportMixin, {
     }
   },
 
+  /**
+    Returns true if the content length has changed (rows added/removed)
+    @private
+  */
   _didContentLengthChange(attrs) {
     let oldLength = get(attrs, 'oldAttrs.content.value.length');
     let newLength = get(attrs, 'newAttrs.content.value.length');
@@ -217,6 +244,7 @@ export default Component.extend(InViewportMixin, {
     this._super(...arguments);
     this._setupListeners();
     this._resizeTable();
+    run.later(this, this._setupStickyHeaders, 500);
   },
 
   /**
@@ -226,6 +254,7 @@ export default Component.extend(InViewportMixin, {
   _setupListeners() {
     this._setupScrollListeners();
     this._setupResizeListener();
+    this._setupWheelListener();
   },
 
   /**
@@ -235,11 +264,85 @@ export default Component.extend(InViewportMixin, {
   */
   _setupScrollListeners() {
     let columns = this.$('.table-columns');
+    let hideOffscreenContent = this.get('hideOffscreenContent');
 
     columns.scroll((e) => {
-      this._setupStickyHeaders();
       columns.not(e.target).scrollTop(e.target.scrollTop);
+
+      if (hideOffscreenContent) {
+        this.get('_rowManagers').invoke('scheduleChildrenUpdate');
+      }
     });
+  },
+
+  _setupWheelListener() {
+     let scrollContainer = this.$('.standard-table-columns-wrapper .table-columns');
+     this.$().bind('wheel', (event) => {
+       // TODO: jquery.mousewheel to help normalize scrolling?
+       let newScrollTop = scrollContainer.scrollTop() + event.originalEvent.deltaY;
+       let newScrollLeft = scrollContainer.scrollLeft() + event.originalEvent.deltaX;
+
+       scrollContainer.scrollTop(newScrollTop);
+       scrollContainer.scrollLeft(newScrollLeft);
+
+       // firefox needs this or we cant scroll fixed columns
+       event.preventDefault();
+     });
+   },
+
+  /**
+    Determines the visible row count based on row height, table height, and
+    containerSize.
+    @public
+  */
+  visibleRowCount: computed('rowHeight', 'tableHeight', 'content.length', 'collapseTableData.length', 'containerSize', function() {
+    let hideOffscreenContent = this.get('hideOffscreenContent');
+    let collapsable = this.get('collapsable');
+
+    if (!hideOffscreenContent) {
+      return collapsable ? this.get('collapseTableData.length') : this.get('content.length');
+    }
+
+    let rowHeight = this.get('rowHeight');
+    let { tableHeight, containerSize, offscreenContentBufferSize } = this.getProperties('tableHeight', 'containerSize', 'offscreenContentBufferSize');
+    let shouldUseTableHeight = isEmpty(containerSize) || containerSize === 0;
+    let height = shouldUseTableHeight ? tableHeight : containerSize;
+
+    return Math.ceil(height / rowHeight * (1 + offscreenContentBufferSize));
+  }),
+
+  getVisibleRowIndexes() {
+    let hideOffscreenContent = this.get('hideOffscreenContent');
+    let collapsable = this.get('collapsable');
+
+    if (!hideOffscreenContent) {
+      let bottomRowIndex = collapsable ? this.get('collapseTableData.length') : this.get('content.length');
+
+      return {
+        topRowIndex: 0,
+        bottomRowIndex
+      };
+    }
+
+    let columnDiv = this.$('.standard-table-columns-wrapper .table-columns');
+    let scrollTop = !columnDiv || columnDiv.length === 0 ? 0 : columnDiv.scrollTop();
+    let { rowHeight, visibleRowCount, offscreenContentBufferSize } = this.getProperties('rowHeight', 'visibleRowCount', 'offscreenContentBufferSize');
+    let topRowIndex = Math.floor(scrollTop / rowHeight);
+    let bufferedTopRowIndex = Math.max(0, topRowIndex - Math.floor(visibleRowCount * offscreenContentBufferSize));
+    let bottomRowIndex = topRowIndex + visibleRowCount;
+
+    return {
+      topRowIndex: bufferedTopRowIndex,
+      bottomRowIndex
+    };
+  },
+
+  registerRowManager(rowManager) {
+    this.get('_rowManagers').addObject(rowManager);
+  },
+
+  unregisterRowManager(rowManager) {
+    this.get('_rowManagers').removeObject(rowManager);
   },
 
   _setupStickyHeaders() {
@@ -253,13 +356,16 @@ export default Component.extend(InViewportMixin, {
     if (usingStickyHeaders) {
       this.set('hasSetupStickyHeaders', true);
 
-      window.requestAnimationFrame(() => {
-        this.$('table').floatThead({
-          position: 'absolute',
-          scrollContainer($table) {
-            return $table.closest('.table-columns');
-          }
-        });
+      requestAnimationFrame(() => {
+        let table = this.$('table');
+        if (table) {
+          table.floatThead({
+            position: 'absolute',
+            scrollContainer($table) {
+              return $table.closest('.table-columns');
+            }
+          });
+        }
         this.didEnterViewport();
       });
     }
@@ -280,8 +386,10 @@ export default Component.extend(InViewportMixin, {
   willDestroyElement() {
     window.removeEventListener('resize', this._resizeHandler, true);
     this._resizeHandler = null;
+    this._content = null;
 
     this.$('.table-columns').off('scroll');
+    this.$().off('wheel');
   },
 
   /**
@@ -331,7 +439,7 @@ export default Component.extend(InViewportMixin, {
 
   didEnterViewport() {
     let isWindows = this.get('isWindows');
-    let { browser } = this.get('browser.browserInfo');
+    let browser = this.get('browser.browserInfo.browser');
 
     if (isWindows && browser === 'chrome') {
       let height = this.$().height() + Math.round(Math.random() * 10);
@@ -343,6 +451,10 @@ export default Component.extend(InViewportMixin, {
 
   actions: {
     toggleRowCollapse(rowGroup) {
+      if (!get(this, 'collapsable')) {
+        return;
+      }
+
       let isNotParent = !get(rowGroup, 'isParent');
       if (isNotParent || !get(this, 'onRowExpand')) {
         return;
@@ -377,6 +489,8 @@ export default Component.extend(InViewportMixin, {
       } else {
         this.notifyPropertyChange('content');
       }
+
+      this.get('_rowManagers').invoke('scheduleChildrenUpdate');
     },
 
     viewportEntered() {
