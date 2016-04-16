@@ -1,6 +1,6 @@
 # Justa-Table Changelog
 
-### Master
+### 0.3.0 (April 16, 2016)
 
 - [#79](https://github.com/cball/justa-table/pull/79)
   - Replace smoke and mirrors with simpler solution.
