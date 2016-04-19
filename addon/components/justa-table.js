@@ -24,8 +24,6 @@ const HORIZONTAL_SCROLLBAR_HEIGHT = 16;
 const DEFAULT_ROW_HEIGHT = 37;
 const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
-export default Component.extend(InViewportMixin, {
-
 // TODO: this should probably go in its own class somewhere
 // I separated this into a function becuase its used multiple times
 let collapseRowGroup = function(rowGroup) {
@@ -38,7 +36,7 @@ let collapseRowGroup = function(rowGroup) {
   }
 };
 
-export default Component.extend({
+export default Component.extend(InViewportMixin, {
   layout,
   classNames: ['justa-table'],
   classNameBindings: ['isLoading', 'stickyHeaders', 'isWindows'],
