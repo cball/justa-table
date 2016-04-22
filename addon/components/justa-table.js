@@ -249,7 +249,7 @@ export default Component.extend(InViewportMixin, {
     this._setupScrollListeners();
     this._setupResizeListener();
     this._setupWheelListener();
-    run.later(this._setupStickyHeaders, 300);
+    run.later(this, this._setupStickyHeaders, 300);
   },
 
   /**
