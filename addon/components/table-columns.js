@@ -6,7 +6,7 @@ const {
   getWithDefault,
   computed,
   computed: { readOnly },
-  run: { scheduleOnce }
+  run
 } = Ember;
 
 const DEFAULT_ROW_HEIGHT = 37;
@@ -94,9 +94,19 @@ export default Ember.Component.extend({
     Gets table's rowHeight.
     @public
     @default DEFAULT_ROW_HEIGHT
+
+    hideOffscreenContent tables need the integer and others need the style string.
   */
   rowHeight: computed('table.rowHeight', function() {
-    return getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
+    let height = getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
+    let hideOffscreenContent = this.get('table.hideOffscreenContent');
+
+    if (hideOffscreenContent) {
+      return height;
+    } else {
+      height = height.toString().replace(/px/, '');
+      return new Ember.Handlebars.SafeString(`height: ${height}px`);
+    }
   }),
 
   /**
@@ -118,7 +128,7 @@ export default Ember.Component.extend({
     let columnLength = this.get('_columnLength');
     if (columnLength !== uniqueColumns.length) {
       this.set('_columnLength', uniqueColumns.length);
-      scheduleOnce('afterRender', this, this.reflowStickyHeaders);
+      run.scheduleOnce('afterRender', this, this.reflowStickyHeaders);
 
       // jscs:disable requireCommentsToIncludeAccess
       /**
@@ -128,7 +138,7 @@ export default Ember.Component.extend({
         makes things line up properly.
 
       */
-      scheduleOnce('afterRender', this, () => {
+      run.scheduleOnce('afterRender', this, () => {
         this.$('.table-columns').scrollLeft(0);
       });
     }
@@ -163,11 +173,13 @@ export default Ember.Component.extend({
   },
 
   didInsertElement() {
+    this._super(...arguments);
     this.$().on('mouseenter', 'tr', this._onRowEnter.bind(this));
     this.$().on('mouseleave', 'tr', this._onRowLeave.bind(this));
   },
 
   willDestroyElement() {
+    this._super(...arguments);
     this._uninstallStickyHeaders();
     this.set('_allColumns', null);
 
@@ -190,7 +202,8 @@ export default Ember.Component.extend({
 
   didRender() {
     this._super(...arguments);
-    this.get('table').didRenderCollection();
+
+    run.next(() => this.get('table').didRenderCollection());
     this._setTableWidthAndPosition();
   },
 
@@ -228,10 +241,10 @@ export default Ember.Component.extend({
 
     let fixedColumnWidth = table.fixedColumnWidth();
     let width = table.$().width() - fixedColumnWidth;
-    let left = fixedColumnWidth;
+    let paddingLeft = fixedColumnWidth;
 
     this.$().css({
-      left
+      paddingLeft
     });
 
     this.$('.table-columns').css({
@@ -247,6 +260,10 @@ export default Ember.Component.extend({
     @private
   */
   _onRowEnter() {
+    if (this.get('isDestroying') || this.get('isDestroyed')) {
+      return;
+    }
+
     let rowIndex = this.$('tr.table-row').index(this.$('tr:hover'));
 
     this._onRowLeave();
@@ -254,6 +271,10 @@ export default Ember.Component.extend({
   },
 
   _onRowLeave() {
+    if (this.get('isDestroying') || this.get('isDestroyed')) {
+      return;
+    }
+
     this.get('table').$('tr').removeClass('hover');
   },
 

@@ -19,7 +19,10 @@ const {
   inject: { service }
 } = Ember;
 
-const HORIZONTAL_SCROLLBAR_HEIGHT = 15;
+const HORIZONTAL_SCROLLBAR_HEIGHT = 16;
+// TODO: actually measure this
+const DEFAULT_ROW_HEIGHT = 37;
+const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
 export default Component.extend(InViewportMixin, {
   layout,
@@ -29,6 +32,7 @@ export default Component.extend(InViewportMixin, {
 
   init() {
     this._super(...arguments);
+    this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -79,6 +83,22 @@ export default Component.extend(InViewportMixin, {
   },
 
   /**
+    If we should hide out of viewport content (vertical only for now).
+    TODO: make this true and rip out S&M.
+    @public
+    @default false
+  */
+  hideOffscreenContent: false,
+
+  /**
+    The amount of additonal rows to load on top/bottom of the viewport when
+    hiding offscreen content. Will round up/down to the nearest row.
+    @public
+    @default 0.5
+  */
+  offscreenContentBufferSize: DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE,
+
+  /**
     Ensure header heights are equal. Schedules after render to ensure it's
     called once per table.
     @public
@@ -121,7 +141,7 @@ export default Component.extend(InViewportMixin, {
   */
   _resizeTable() {
     let requestedHeight = this.get('tableHeight');
-    let actualHeight = this.$('.table-columns table').outerHeight();
+    let actualHeight = this.$('.standard-table-columns-wrapper .table-columns table').outerHeight();
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
@@ -134,9 +154,7 @@ export default Component.extend(InViewportMixin, {
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
 
-    run.next(() => {
-      this.set('containerSize', totalHeight);
-    });
+    run.next(() => this.set('containerSize', totalHeight));
   },
 
   _hasHorizontalScroll() {
@@ -164,7 +182,11 @@ export default Component.extend(InViewportMixin, {
     },
     set(key, value) {
       this.set('_content', value);
-      run.scheduleOnce('afterRender', this, this._scrollToTop);
+
+      if (!this.get('isDestroying') && !this.get('isDestroyed')) {
+        run.scheduleOnce('afterRender', this, this._scrollToTop);
+      }
+
       return value;
     }
   }),
@@ -226,6 +248,8 @@ export default Component.extend(InViewportMixin, {
   _setupListeners() {
     this._setupScrollListeners();
     this._setupResizeListener();
+    this._setupWheelListener();
+    run.later(this._setupStickyHeaders, 300);
   },
 
   /**
@@ -234,12 +258,32 @@ export default Component.extend(InViewportMixin, {
     @private
   */
   _setupScrollListeners() {
-    let columns = this.$('.table-columns');
+    let columns = this.$('.standard-table-columns-wrapper .table-columns')[0];
 
-    columns.scroll((e) => {
-      this._setupStickyHeaders();
-      columns.not(e.target).scrollTop(e.target.scrollTop);
+    this._watchPosition(columns, (values) => {
+      let { newValue } = values;
+      this.$('.fixed-table-columns-wrapper .table-columns').scrollTop(newValue);
     });
+    // columns.scroll((e) => {
+    //   this._setupStickyHeaders();
+    //   columns.not(e.target).scrollTop(e.target.scrollTop);
+    // });
+  },
+
+  _watchPosition(obj, cb) {
+    var top = obj.scrollTop;
+
+    function checkPosition() {
+      requestAnimationFrame(function() {
+        var newTop = obj.scrollTop;
+        if (top !== newTop) {
+          cb({ oldValue: top, newValue: newTop });
+          top = newTop;
+        }
+        checkPosition();
+      });
+    }
+    checkPosition();
   },
 
   _setupStickyHeaders() {
@@ -253,7 +297,7 @@ export default Component.extend(InViewportMixin, {
     if (usingStickyHeaders) {
       this.set('hasSetupStickyHeaders', true);
 
-      window.requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         this.$('table').floatThead({
           position: 'absolute',
           scrollContainer($table) {
@@ -277,11 +321,29 @@ export default Component.extend(InViewportMixin, {
     window.addEventListener('resize', this._resizeHandler, true);
   },
 
+  _setupWheelListener() {
+    let scrollContainer = this.$('.standard-table-columns-wrapper .table-columns');
+    this.$().bind('wheel', (event) => {
+      // TODO: jquery.mousewheel to help normalize scrolling?
+      let newScrollTop = scrollContainer.scrollTop() + event.originalEvent.deltaY;
+      let newScrollLeft = scrollContainer.scrollLeft() + event.originalEvent.deltaX;
+
+      scrollContainer.scrollTop(newScrollTop);
+      scrollContainer.scrollLeft(newScrollLeft);
+
+      // firefox needs this or we cant scroll fixed columns
+      event.preventDefault();
+    });
+  },
+
   willDestroyElement() {
     window.removeEventListener('resize', this._resizeHandler, true);
     this._resizeHandler = null;
+    this._content = null;
+    this.content = null;
 
     this.$('.table-columns').off('scroll');
+    this.$().off('wheel');
   },
 
   /**
@@ -331,7 +393,7 @@ export default Component.extend(InViewportMixin, {
 
   didEnterViewport() {
     let isWindows = this.get('isWindows');
-    let { browser } = this.get('browser.browserInfo');
+    let browser = this.get('browser.browserInfo.browser');
 
     if (isWindows && browser === 'chrome') {
       let height = this.$().height() + Math.round(Math.random() * 10);
@@ -343,6 +405,10 @@ export default Component.extend(InViewportMixin, {
 
   actions: {
     toggleRowCollapse(rowGroup) {
+      if (!get(this, 'collapsable')) {
+        return;
+      }
+
       let isNotParent = !get(rowGroup, 'isParent');
       if (isNotParent || !get(this, 'onRowExpand')) {
         return;

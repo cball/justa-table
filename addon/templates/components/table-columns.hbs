@@ -13,42 +13,67 @@
         </tr>
       </thead>
 
-      {{#if table.collapsable}}
-        {{#table-vertical-collection
-          tagName="tbody"
-          itemClassNames=(concat 'table-row ' mergedRowClasses)
-          content=table.collapseTableData
-          containerSize=table.containerSize
-          defaultHeight=rowHeight
-          bufferSize=1
-          alwaysUseDefaultHeight=true
-          containerSelector=".table-columns"
-          on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
+      {{#if (unbound table.collapsable)}}
+        {{#if (unbound table.hideOffscreenContent)}}
+          {{#table-vertical-collection
+            tagName="tbody"
+            itemClassNames=(concat 'table-row ' mergedRowClasses)
+            content=table.collapseTableData
+            containerSize=table.containerSize
+            defaultHeight=rowHeight
+            bufferSize=1
+            alwaysUseDefaultHeight=true
+            containerSelector=".table-columns"
+            on-row-click=(action 'toggleRowCollapse' target=table) as |row|}}
 
-          {{#if row.label}}
-            <td colspan={{columns.length}} class="table-cell">
-              {{row.label}}
-            </td>
-          {{else if (or row.isParent (not row.parent.IsCollapsed))}}
-            {{yield row}}
-          {{/if}}
+            {{#if row.label}}
+              <td colspan={{columns.length}} class="table-cell">
+                {{row.label}}
+              </td>
+            {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+              {{yield row}}
+            {{/if}}
 
-        {{/table-vertical-collection}}
+          {{/table-vertical-collection}}
+        {{else}}
+          <tbody>
+            {{#each table.collapseTableData as |row|}}
+              <tr class={{concat 'table-row ' mergedRowClasses}}>
+                {{#if row.label}}
+                  <td colspan={{columns.length}} class="table-cell">
+                    {{row.label}}
+                  </td>
+                {{else if (or row.isParent (not row.parent.IsCollapsed))}}
+                  {{yield row}}
+                {{/if}}
+              </tr>
+            {{/each}}
+          </tbody>
+        {{/if}}
       {{else}}
-        {{#vertical-collection
-          tagName="tbody"
-          itemClassNames=(concat 'table-row ' mergedRowClasses)
-          content=table.content
-          containerSize=table.containerSize
-          defaultHeight=rowHeight
-          bufferSize=1
-          alwaysUseDefaultHeight=true
-          containerSelector=".table-columns"
-          as |row|}}
+        {{#if (unbound table.hideOffscreenContent)}}
+          {{#table-vertical-collection
+            tagName="tbody"
+            itemClassNames=(concat 'table-row ' mergedRowClasses)
+            content=table.content
+            containerSize=table.containerSize
+            defaultHeight=rowHeight
+            bufferSize=1
+            alwaysUseDefaultHeight=true
+            containerSelector=".table-columns" as |row|}}
 
-          {{yield row}}
+            {{yield row}}
 
-        {{/vertical-collection}}
+          {{/table-vertical-collection}}
+        {{else}}
+          <tbody>
+            {{#each table.content as |row|}}
+              <tr class={{concat 'table-row ' mergedRowClasses}} style={{rowHeight}}>
+                {{yield row}}
+              </tr>
+            {{/each}}
+          </tbody>
+        {{/if}}
       {{/if}}
     </table>
   </div>
