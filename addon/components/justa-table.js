@@ -262,7 +262,10 @@ export default Component.extend(InViewportMixin, {
 
     this._watchPosition(columns, (values) => {
       let { newValue } = values;
-      this.$('.fixed-table-columns-wrapper .table-columns').scrollTop(newValue);
+      let div = this.$('.fixed-table-columns-wrapper .table-columns');
+      if (div) {
+        div.scrollTop(newValue);
+      }
     });
   },
 
@@ -274,17 +277,20 @@ export default Component.extend(InViewportMixin, {
   _watchPosition(obj, cb) {
     let top = obj.scrollTop;
 
-    function checkPosition() {
-      requestAnimationFrame(function() {
+    let checkPosition = () => {
+      requestAnimationFrame(() => {
         let newTop = obj.scrollTop;
 
         if (top !== newTop) {
           cb({ oldValue: top, newValue: newTop });
           top = newTop;
         }
-        checkPosition();
+
+        if (!this.get('isDestroying') && !this.get('isDestroyed')) {
+          checkPosition();
+        }
       });
-    }
+    };
     checkPosition();
   },
 
