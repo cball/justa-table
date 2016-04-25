@@ -258,24 +258,26 @@ export default Component.extend(InViewportMixin, {
     @private
   */
   _setupScrollListeners() {
-    let columns = this.$('.standard-table-columns-wrapper .table-columns')[0];
+    let [columns] = this.$('.standard-table-columns-wrapper .table-columns');
 
     this._watchPosition(columns, (values) => {
       let { newValue } = values;
       this.$('.fixed-table-columns-wrapper .table-columns').scrollTop(newValue);
     });
-    // columns.scroll((e) => {
-    //   this._setupStickyHeaders();
-    //   columns.not(e.target).scrollTop(e.target.scrollTop);
-    // });
   },
 
+  /**
+    Keeps fixed column scroll in sync with standard columns. Uses
+    requestAnimationFrame over a scroll listener for speed improvements.
+    @private
+  */
   _watchPosition(obj, cb) {
-    var top = obj.scrollTop;
+    let top = obj.scrollTop;
 
     function checkPosition() {
       requestAnimationFrame(function() {
-        var newTop = obj.scrollTop;
+        let newTop = obj.scrollTop;
+
         if (top !== newTop) {
           cb({ oldValue: top, newValue: newTop });
           top = newTop;
@@ -286,6 +288,10 @@ export default Component.extend(InViewportMixin, {
     checkPosition();
   },
 
+  /**
+    Sets up sticky headers if they have been enabled.
+    @private
+  */
   _setupStickyHeaders() {
     let hasSetupStickyHeaders = this.get('hasSetupStickyHeaders');
     if (hasSetupStickyHeaders) {
@@ -340,9 +346,7 @@ export default Component.extend(InViewportMixin, {
     window.removeEventListener('resize', this._resizeHandler, true);
     this._resizeHandler = null;
     this._content = null;
-    this.content = null;
 
-    this.$('.table-columns').off('scroll');
     this.$().off('wheel');
   },
 
