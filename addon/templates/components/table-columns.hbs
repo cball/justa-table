@@ -9,6 +9,8 @@
               column=column
               class=column.headerClassNames
               onColumnWidthChange=(action 'columnWidthChanged')}}
+          {{else}}
+            <th></th>
           {{/each}}
         </tr>
       </thead>
