@@ -163,7 +163,9 @@ export default Component.extend(InViewportMixin, {
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
 
-    run.next(() => this.set('containerSize', totalHeight));
+    // add random number to totalHeight to ensure S&M recalculation of layout
+    let randomSeed = Math.random();
+    run.next(() => this.set('containerSize', totalHeight + randomSeed));
   },
 
   _hasHorizontalScroll() {
@@ -462,6 +464,7 @@ export default Component.extend(InViewportMixin, {
         });
       } else {
         this.notifyPropertyChange('content');
+        run.scheduleOnce('afterRender', this, this._resizeTable);
       }
     },
 
