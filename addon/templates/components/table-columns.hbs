@@ -25,6 +25,13 @@
           {{#if row.label}}
             <td colspan={{columns.length}} class="table-cell">
               {{row.label}}
+              <!--
+                TODO: this is necessary so we render something here. otherwise
+                its possible nothing renders at all. NEEDS TO BE FIXED
+                -->
+              <div style="display:none;">
+                {{yield row}}
+              </div>
             </td>
           {{else if (or row.isParent (not row.parent.IsCollapsed))}}
             {{yield row}}
