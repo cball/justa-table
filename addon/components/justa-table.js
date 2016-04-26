@@ -32,7 +32,6 @@ export default Component.extend(InViewportMixin, {
 
   init() {
     this._super(...arguments);
-    this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -46,6 +45,16 @@ export default Component.extend(InViewportMixin, {
     @public
   */
   tableHeight: 500,
+
+  rowHeight: DEFAULT_ROW_HEIGHT,
+  headerHeight: DEFAULT_ROW_HEIGHT,
+
+  headerHeightStyle: computed('headerHeight', function() {
+    let headerHeight = this.get('headerHeight');
+    headerHeight = headerHeight.toString().replace(/px/, '');
+
+    return new Ember.Handlebars.SafeString(`height: ${headerHeight}px`);
+  }),
 
   /**
     If the table should use pagination. Will fire the 'on-load-more-rows'
@@ -447,6 +456,7 @@ export default Component.extend(InViewportMixin, {
         this.attrs.onRowExpand(object).then((data) => {
           set(object, this.get('rowGroupDataName'), rowData.concat(data));
           this.notifyPropertyChange('content');
+          run.scheduleOnce('afterRender', this, this._resizeTable);
         }).finally(() => {
           set(object, 'loading', false);
         });
