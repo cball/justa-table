@@ -381,7 +381,9 @@ export default Component.extend(InViewportMixin, {
   */
   _setupResizeListener() {
     this._resizeHandler = () => {
-      this.rerender();
+      Ember.run.next(() => {
+        this.rerender();
+      }, this);
     };
 
     window.addEventListener('resize', this._resizeHandler, true);
