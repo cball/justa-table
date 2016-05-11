@@ -158,7 +158,7 @@ export default Component.extend(InViewportMixin, {
 
     run.next(() => {
       if (!this.get('isDestroyed') || !this.get('isDestroying')) {
-        this.set('containerSize', totalHeight)
+        this.set('containerSize', totalHeight);
       }
     });
   },
