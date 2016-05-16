@@ -194,7 +194,7 @@ export default Component.extend(InViewportMixin, {
     set(key, value) {
       this.set('_content', value);
 
-      if (!this.get('isDestroying') && !this.get('isDestroyed')) {
+      if (!this.get('isDestroying') && !this.get('isDestroyed') && !this.get('collapsable')) {
         run.scheduleOnce('afterRender', this, this._scrollToTop);
       }
 
