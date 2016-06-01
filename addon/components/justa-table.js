@@ -218,6 +218,8 @@ export default Component.extend(InViewportMixin, {
       assert(`didRenderAction must be passed as a closure action. You passed ${didRenderAction}`, typeof didRenderAction === 'function');
       didRenderAction(this);
     }
+
+    this.ensureEqualHeaderHeight();
   },
 
   didReceiveAttrs(attrs) {
