@@ -146,8 +146,7 @@ export default Component.extend(InViewportMixin, {
     let actualHeight = this.$('.standard-table-columns-wrapper .table-columns table').outerHeight();
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
-    let shouldAddHeightBuffer = isWindows && this._hasHorizontalScroll();
-
+    let shouldAddHeightBuffer = isWindows && this.get('isIE') && this._hasHorizontalScroll();
     if (shouldAddHeightBuffer) {
       totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
     }
@@ -176,6 +175,10 @@ export default Component.extend(InViewportMixin, {
     let hasWindowsString = navigator.userAgent.match(/Windows/i);
 
     return isPresent(hasWindowsString);
+  }),
+
+  isIE: computed(function() {
+    return this.get('browser.browserInfo.vendor') === 'ie' && this.get('browser.browserInfo.version') < 11;
   }),
 
   content: computed({
