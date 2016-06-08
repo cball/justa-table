@@ -123,6 +123,7 @@ export default Ember.Component.extend({
     let columnLength = this.get('_columnLength');
     if (columnLength !== uniqueColumns.length) {
       this.set('_columnLength', uniqueColumns.length);
+      this.set('widthAndPositionSet', false);
       run.scheduleOnce('afterRender', this, this.reflowStickyHeaders);
 
       // jscs:disable requireCommentsToIncludeAccess

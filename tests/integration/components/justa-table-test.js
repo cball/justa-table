@@ -317,3 +317,59 @@ test('adds a click listener to table rows', function(assert) {
     this.$('.table-row').click();
   });
 });
+
+test('recalculates fixed column width', function(assert) {
+  assert.expect(2);
+
+  let content = [
+    {
+      name: 'fred',
+      stateAbb: 'CA',
+      age: 30,
+      data: []
+    }
+  ];
+
+  this.setProperties({
+    content,
+    showState: false
+  });
+
+  this.render(hbs`
+    {{#justa-table
+      content=content
+      collapsable=true as |table|}}
+
+      {{#fixed-table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          width=150
+          textWrap=true
+          headerName='Name'
+          valueBindingPath='name'}}
+
+        {{#if showState}}
+          {{table-column
+            row=row
+            width=100
+            headerName='State'
+            valueBindingPath='stateAbb'}}
+        {{/if}}
+      {{/fixed-table-columns}}
+
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='Age'
+          valueBindingPath='age'}}
+      {{/table-columns}}
+
+    {{/justa-table}}
+  `);
+
+  return wait().then(() => {
+    assert.equal(this.$('.fixed-table-columns-wrapper').width(), 152);
+    this.set('showState', true);
+    assert.equal(this.$('.fixed-table-columns-wrapper').width(), 254);
+  });
+});
