@@ -373,3 +373,84 @@ test('recalculates fixed column width', function(assert) {
     assert.equal(this.$('.fixed-table-columns-wrapper').width(), 254);
   });
 });
+
+test('The consecutively repeated values are grayed out (except the first one) if the value grayedOutCellGroup is set to true, ', function(assert) {
+  let content = [{
+      director: 'Quentin Tarantino',
+      movie: 'Pulp Fiction'
+    },
+    {
+      director: 'Quentin Tarantino',
+      movie: 'Reservoir Dogs'
+    },
+    {
+      director: 'JJ Abrams',
+      movie: 'Star Wars Episode VII'
+    },
+    {
+      director: 'Christopher Nolan',
+      movie: 'Dark Knight Rises'
+    }
+  ];
+  this.set('content', content);
+
+  this.render(hbs`
+    {{#justa-table content=content as |table|}}
+      {{#table-columns table=table as |row|}}
+        {{table-column
+          row=row
+          headerName='director'
+          grayedOutRepeatedCells=true
+          useFakeRowspan=true
+          valueBindingPath='director'}}
+        {{table-column
+          row=row
+          headerName='movie'
+          useFakeRowspan=true
+          valueBindingPath='movie'}}
+      {{/table-columns}}
+    {{/justa-table}}
+  `);
+  return wait().then(() => {
+    assert.equal(getCell(this, { row: 1, cell: 1 }).children().hasClass('repeated-cell'), false, "first cell shouldn't have a class name");
+    assert.equal(getCell(this, { row: 2, cell: 1 }).children().hasClass('repeated-cell'), true, "second row, first cell should have the class name 'repeated-cell'");
+    assert.equal(getCell(this, { row: 3, cell: 1 }).children().hasClass('repeated-cell'), false, "third row, first cell shouldn't have a class name");
+  });
+});
+
+test('If the values grayedOutRepeatedCells and groupWithPriorRow are set as true, the assert will fail, ', function(assert) {
+  let content = [{
+      director: 'Quentin Tarantino',
+      movie: 'Pulp Fiction'
+    },
+    {
+      director: 'Christopher Nolan',
+      movie: 'Dark Knight Rises'
+    }
+  ];
+  this.set('content', content);
+
+  assert.throws(() => {
+    this.render(hbs`
+      {{#justa-table content=content as |table|}}
+        {{#table-columns table=table as |row|}}
+          {{table-column
+            row=row
+            headerName='director'
+            grayedOutRepeatedCells=true
+            groupWithPriorRow=true
+            useFakeRowspan=true
+            valueBindingPath='director'}}
+          {{table-column
+            row=row
+            headerName='movie'
+            useFakeRowspan=true
+            valueBindingPath='movie'}}
+        {{/table-columns}}
+      {{/justa-table}}
+    `);
+  },
+    new Error("Assertion Failed: Can't send both grouping properties as true"),
+    'The error message should match the expected'
+  );
+});

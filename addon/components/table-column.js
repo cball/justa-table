@@ -22,6 +22,7 @@ export default Component.extend({
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'shouldUseFakeRowspan:fake-rowspan'],
   alignCenter: computed.equal('align', 'center'),
   alignRight: computed.equal('align', 'right'),
+  repeatedCell: false,
 
   table: computed(function() {
     // TODO: do without private function
@@ -46,6 +47,13 @@ export default Component.extend({
     @public
   */
   groupWithPriorRow: false,
+
+  /**
+    All the rows repeated consecutively will be grayed out, except for the first one,
+    this is for creating a grouping appearance
+    @public
+  */
+  grayedOutRepeatedCells: false,
 
   /**
     The width of this column in pixels.
@@ -109,14 +117,19 @@ export default Component.extend({
   init() {
     this._super(...arguments);
     assert('Must use table column as a child of table-columns or fixed-table-columns.', this.get('table'));
+    let bothGroupValues = this.get('groupWithPriorRow') && this.get('grayedOutRepeatedCells');
+    assert("Can't send both grouping properties as true", !bothGroupValues);
     run.scheduleOnce('sync', this, this._registerWithParent);
   },
 
   didReceiveAttrs() {
     this._super(...arguments);
-
     if (this.get('groupWithPriorRow')) {
       run.scheduleOnce('sync', this, this._groupWithPriorRow);
+    }
+
+    if (this.get('grayedOutRepeatedCells')) {
+      run.scheduleOnce('sync', this, this._grayedOutRepeatedCells);
     }
   },
 
@@ -130,7 +143,7 @@ export default Component.extend({
     this.set('_registeredParent', tableColumns);
   },
 
-  _groupWithPriorRow() {
+  _isRepeatedValue() {
     let rows = new A(get(this, 'table.content'));
     let currentRow = get(this, 'row');
     let index = rows.indexOf(currentRow);
@@ -138,15 +151,28 @@ export default Component.extend({
     let valueBindingPath = get(this, 'valueBindingPath');
 
     if (!previousRow) {
-      return;
+      return false;
     }
 
     let previousValue = get(previousRow, valueBindingPath);
     let currentValue = getWithDefault(this, `row.${valueBindingPath}`, '');
 
     if (isEmpty(previousValue) || previousValue === currentValue) {
+      return true;
+    }
+    return false;
+  },
+
+  _groupWithPriorRow() {
+    let repeatedValue = this._isRepeatedValue();
+    if (repeatedValue) {
       this.set('valueBindingPath', 'blankCell');
     }
+  },
+
+  _grayedOutRepeatedCells() {
+    let repeatedValue = this._isRepeatedValue();
+    this.set('repeatedCell', repeatedValue);
   },
 
   willDestroyElement() {
