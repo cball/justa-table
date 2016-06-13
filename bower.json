@@ -1,20 +1,15 @@
 {
   "name": "justa-table",
   "dependencies": {
+    "animation-frame": "~0.2.4",
     "bootstrap-sass": "3.3.5",
-    "ember": "2.4.2",
-    "ember-cli-shims": "0.0.6",
-    "ember-cli-test-loader": "0.1.3",
-    "ember-load-initializers": "#0.1.7",
-    "ember-qunit": "0.4.16",
-    "ember-qunit-notifications": "0.0.7",
-    "ember-resolver": "~0.1.18",
+    "ember": "~2.6.0",
+    "ember-cli-shims": "0.1.1",
+    "ember-cli-test-loader": "0.2.2",
+    "ember-qunit-notifications": "0.1.0",
     "Faker": "~3.0.1",
     "jquery": "2.1.4",
-    "loader.js": "ember-cli/loader.js#3.2.1",
-    "qunit": "~1.18.0",
-    "showdown": "~1.3.0",
-    "animation-frame": "~0.2.4",
-    "jquery.floatThead": "^1.3.2"
+    "jquery.floatThead": "^1.3.2",
+    "showdown": "~1.3.0"
   }
 }

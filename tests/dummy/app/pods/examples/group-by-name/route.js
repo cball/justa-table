@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   model() {
-    return [
+    return Ember.A([
       {
         director: 'Quentin Tarantino',
         movie: 'Pulp Fiction'
@@ -23,6 +23,6 @@ export default Ember.Route.extend({
         director: 'Christopher Nolan',
         movie: 'Interstellar'
       }
-    ];
+    ]);
   }
 });
