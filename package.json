@@ -9,7 +9,7 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember try:testall"
+    "test": "ember try:each"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
     "ember-get-helper": "1.0.4",
     "ember-run-raf": "1.1.1",
     "ember-suave": "1.2.3",
-    "ember-try": "0.0.8"
+    "ember-try": "0.2.2"
   },
   "keywords": [
     "ember-addon"
