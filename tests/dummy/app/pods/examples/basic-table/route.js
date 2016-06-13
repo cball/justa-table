@@ -15,7 +15,7 @@ export default Ember.Route.extend({
       users.push(user);
     }
 
-    return users;
+    return Ember.A(users);
   },
 
   actions: {
@@ -25,7 +25,7 @@ export default Ember.Route.extend({
 
     removeSomeRows() {
       let users = this.get('controller.model');
-      Ember.set(this, 'controller.model', users.slice(5, 50));
+      Ember.set(this, 'controller.model', Ember.A(users.slice(5, 50)));
     }
   }
 });

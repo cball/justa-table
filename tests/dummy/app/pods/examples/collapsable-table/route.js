@@ -41,7 +41,7 @@ export default Ember.Route.extend({
       group.data = group.data.concat(users);
     });
 
-    return userGroups;
+    return Ember.A(userGroups);
   },
 
   actions: {

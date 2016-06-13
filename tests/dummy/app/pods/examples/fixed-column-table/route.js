@@ -18,7 +18,7 @@ export default Ember.Route.extend({
       users.push(user);
     }
 
-    return users;
+    return Ember.A(users);
   },
 
   actions: {
