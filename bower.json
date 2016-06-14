@@ -11,5 +11,8 @@
     "jquery": "2.1.4",
     "jquery.floatThead": "^1.3.2",
     "showdown": "~1.3.0"
+  },
+  "resolutions": {
+    "qunit-notifications": "~0.1.0"
   }
 }
