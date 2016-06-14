@@ -1,5 +1,7 @@
 {{#if hasBlock}}
   {{yield}}
 {{else}}
-  {{get row valueBindingPath}}
+  <div class="{{if repeatedCell 'repeated-cell'}}">
+    {{get row valueBindingPath}}
+  </div>
 {{/if}}
