@@ -147,7 +147,7 @@ export default Component.extend(InViewportMixin, {
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this.get('isIE') && this._hasHorizontalScroll();
-    if (shouldAddHeightBuffer) {
+    if (this._hasHorizontalScroll()) {
       totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
     }
 
