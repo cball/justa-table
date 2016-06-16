@@ -155,7 +155,11 @@ export default Component.extend(InViewportMixin, {
     // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
     this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
 
-    run.next(() => this.set('containerSize', totalHeight));
+    run.next(() => {
+      if (!this.get('isDestroyed') || !this.get('isDestroying')) {
+        this.set('containerSize', totalHeight);
+      }
+    });
   },
 
   _hasHorizontalScroll() {
@@ -382,7 +386,9 @@ export default Component.extend(InViewportMixin, {
   */
   _setupResizeListener() {
     this._resizeHandler = () => {
-      this.rerender();
+      Ember.run.next(() => {
+        this.rerender();
+      }, this);
     };
 
     window.addEventListener('resize', this._resizeHandler, true);

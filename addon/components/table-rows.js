@@ -47,7 +47,11 @@ export default Component.extend({
   },
 
   _updateChildren() {
-    let children = this.get('_children').sortBy('index');
+    let children = this.get('_children');
+    if (!children) {
+      return;
+    }
+    children = children.sortBy('index');
     if (!get(children, 'length')) {
       return;
     }
