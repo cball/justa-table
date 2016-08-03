@@ -199,9 +199,9 @@ export default Ember.Component.extend({
   didRender() {
     this._super(...arguments);
     run.next(() => {
+      this._setTableWidthAndPosition();
       this.get('table').didRenderCollection();
     });
-    this._setTableWidthAndPosition();
   },
 
   didReceiveAttrs() {
