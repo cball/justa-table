@@ -366,11 +366,12 @@ test('recalculates fixed column width', function(assert) {
 
     {{/justa-table}}
   `);
-
   return wait().then(() => {
     assert.equal(this.$('.fixed-table-columns-wrapper').width(), 152);
     this.set('showState', true);
-    assert.equal(this.$('.fixed-table-columns-wrapper').width(), 254);
+    return wait().then(() => {
+      assert.equal(this.$('.fixed-table-columns-wrapper').width(), 254);
+    });
   });
 });
 

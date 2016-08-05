@@ -147,21 +147,23 @@ export default Component.extend(InViewportMixin, {
     let totalHeight = actualHeight === 0 ? requestedHeight : Math.min(requestedHeight, actualHeight);
     let isWindows = this.get('isWindows');
     let shouldAddHeightBuffer = isWindows && this.get('isIE') && this._hasHorizontalScroll();
-    if (this._hasHorizontalScroll()) {
-      totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
-    }
 
-    this.$().height(totalHeight);
-    // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
-    this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
+    run.next(() => {
+      if (this._hasHorizontalScroll()) {
+        totalHeight = totalHeight + HORIZONTAL_SCROLLBAR_HEIGHT;
+      }
 
-    run.next(() => this.set('containerSize', totalHeight));
+      this.$().height(totalHeight);
+      // windows does not respect the height set, so it needs a 2px buffer if horizontal scrollbar
+      this.$('.table-columns').height(shouldAddHeightBuffer ? totalHeight + 2 : totalHeight);
+
+      this.set('containerSize', totalHeight);
+    });
   },
 
   _hasHorizontalScroll() {
     let tableWidth = this.$('.standard-table-columns-wrapper table').outerWidth();
     let containerWidth = this.$('.standard-table-columns-wrapper .table-columns').outerWidth();
-
     return tableWidth > containerWidth;
   },
 
