@@ -106,7 +106,7 @@ export default Component.extend(InViewportMixin, {
     @public
   */
   ensureEqualHeaderHeight() {
-    run.scheduleOnce('afterRender', this, this._ensureEqualHeaderHeight);
+    run.next(this, this._ensureEqualHeaderHeight);
   },
 
   /**
