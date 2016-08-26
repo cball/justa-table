@@ -1,9 +1,10 @@
 <a href="#" class="btn btn-default" {{action 'removeSomeRows'}}>- Remove some rows</a>
 <a href="#" class="btn btn-default" {{action 'insertSomeColumns'}}>+ Insert some columns</a>
 <a href="#" class="btn btn-default" {{action 'removeAColumn'}}>- Remove a dynamic column</a>
+<a href="#" class="btn btn-default" {{action 'toggleCaption'}}>- Toggle Caption Visibility</a>
 <br>
 
-{{#justa-table content=content as |table|}}
+{{#justa-table content=content caption='Basic Table Example' hideCaption=hideCaption as |table|}}
   {{#table-columns table=table as |row|}}
 
     {{table-column

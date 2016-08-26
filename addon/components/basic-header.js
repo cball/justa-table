@@ -6,6 +6,7 @@ const { computed } = Ember;
 export default Ember.Component.extend({
   layout,
   tagName: 'th',
+  attributeBindings: ['scope'],
   classNameBindings: ['alignCenter:center', 'alignRight:right', 'textWrap'],
   alignCenter: computed.equal('column.align', 'center'),
   alignRight: computed.equal('column.align', 'right'),
@@ -13,6 +14,13 @@ export default Ember.Component.extend({
 
   column: null,
   resizable: computed.readOnly('column.resizable'),
+
+  /**
+   * Accessability attribute that, for screen readers, unambiguously establishes
+   * the cells that the header comprised by this <th> element relates to.
+   * @see: http://webaim.org/techniques/tables/data#scope
+   */
+  scope: 'col',
 
   didRender() {
     let table = this.get('table');

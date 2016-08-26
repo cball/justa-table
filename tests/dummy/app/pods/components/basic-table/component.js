@@ -4,6 +4,8 @@ import layout from './template';
 export default Ember.Component.extend({
   layout,
   dynamicColumns: null,
+  content: null,
+  hideCaption: false,
 
   init() {
     this._super(...arguments);
@@ -47,6 +49,10 @@ export default Ember.Component.extend({
       });
 
       this.set('dynamicColumns', newColumns);
+    },
+
+    toggleCaption() {
+      this.toggleProperty('hideCaption');
     }
   }
 });
