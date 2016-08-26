@@ -2,7 +2,11 @@
 module.exports = {
   description: 'install justa-table into a project',
 
-  normalizeEntityName: function() {}
+  normalizeEntityName: function() {},
+
+  afterInstall: function() {
+    return this.addBowerPackageToProject('jquery.floatThead', '^1.3.2');
+  }
 
   // locals: function(options) {
   //   // Return custom template variables here.
