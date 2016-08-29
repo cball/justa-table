@@ -1,7 +1,7 @@
 {
   "name": "justa-table",
   "version": "0.3.5",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "A Glimmer-compatible Ember Component that renders HTML tables.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -49,7 +49,9 @@
     "loader.js": "^4.0.1"
   },
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "table",
+    "html-table"
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.6",
