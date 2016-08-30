@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import layout from '../templates/components/table-columns';
+import uniqBy from 'justa-table/utils/unique-by';
 
 const {
   A,
@@ -111,16 +112,9 @@ export default Ember.Component.extend({
     @public
   */
   columns: computed('_allColumns.[]', function columns() {
-    let uniqueColumns = new A();
-    this.get('_allColumns').forEach((column) => {
-      let headerName = column.get('headerName');
-      let existingHeaderNames = new A(uniqueColumns.mapBy('headerName'));
-      if (!existingHeaderNames.contains(headerName)) {
-        uniqueColumns.push(column);
-      }
-    });
+    const uniqueColumns = uniqBy(this.get('_allColumns') || [], 'headerName');
+    const columnLength = this.get('_columnLength');
 
-    let columnLength = this.get('_columnLength');
     if (columnLength !== uniqueColumns.length) {
       this.set('_columnLength', uniqueColumns.length);
       this.set('widthAndPositionSet', false);
