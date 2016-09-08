@@ -63,6 +63,25 @@ export default Component.extend(InViewportMixin, {
   rowClasses: null,
 
   /**
+   * A caption for the table. If supplied, this will be inserted into
+   * a <caption> tag as the first-child node of the <table>
+   * @public
+   */
+  caption: null,
+
+  /**
+   * "left", "center", or "right" text alignment for the caption
+   * @public
+   */
+  captionAlignment: null,
+
+  /**
+   * Support hiding the caption from view, but still rendering it
+   * for accessibility.
+   */
+  hideCaption: false,
+
+  /**
     If content is empty.
     @public
   */

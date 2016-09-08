@@ -1,6 +1,6 @@
 <a href="#" {{action 'removeSomeRows'}}>Remove some rows</a>
 
-{{#justa-table content=model as |table|}}
+{{#justa-table content=model caption='Fixed Columns Example' captionAlignment='left' as |table|}}
   {{#fixed-table-columns table=table as |row|}}
     {{table-column
       row=row

@@ -2,6 +2,21 @@
   margin-bottom: 1em;
   border: 1px solid #e5e5e5;
 
+  caption {
+    text-align: center;
+    border-bottom: 0.1625em solid #DDDDDD;  // TODO: Determine whether or not this is actually an appropriate concern
+  }
+
+  // @see: http://webaim.org/techniques/css/invisiblecontent/#absolutepositioning
+  caption.visually-hidden {
+    position: absolute;
+    top: auto;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
   th {
     border-right: 1px solid #666;
   }

@@ -17,17 +17,20 @@ function getRow(context, rowObject) {
   return context.$(`tbody tr:nth-of-type(${row})`);
 }
 
-test('it renders content', function(assert) {
+test('rendering content', function(assert) {
   let content = [
     { name: 'Fred' },
     { name: 'Wilma' },
     { name: undefined }
   ];
 
+  const caption = 'The Flinstones';
+
   this.set('content', content);
+  this.set('caption', caption);
 
   this.render(hbs`
-    {{#justa-table content=content as |table|}}
+    {{#justa-table content=content caption=caption as |table|}}
       {{#table-columns table=table as |row|}}
         {{table-column
           row=row
@@ -39,6 +42,7 @@ test('it renders content', function(assert) {
   `);
 
   return wait().then(() => {
+    assert.equal(this.$('table').children()[0].textContent.trim(), caption, `The first child of the <table> is a caption with the provided content of ${caption}`);
     assert.equal(this.$('th').text().trim(), 'foo', 'our column was named foo');
     assert.equal(this.$('tr').length, 4, 'should have 2 rows and a header row');
     assert.equal(getCell(this, { row: 1, cell: 1 }).text().trim(), 'Fred', 'first cell should be Fred');

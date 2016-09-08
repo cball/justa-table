@@ -4,9 +4,15 @@
   position: relative;
 
   table {
+    width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     border-spacing: 0;
   }
+
+  caption.align-left { text-align: left; }
+  caption.align-center { text-align: center; }
+  caption.align-right { text-align: right; }
 
   tr {
     height: 36px;
@@ -39,10 +45,6 @@
     white-space: normal;
   }
 
-  table {
-    width: 100%;
-    table-layout: fixed;
-  }
 
   .table-columns-wrapper {
     position: absolute;

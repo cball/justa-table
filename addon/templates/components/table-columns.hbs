@@ -1,6 +1,9 @@
 <div class="table-columns">
   <div class="scroll-buffer">
     <table class="table">
+      {{#if table.caption}}
+        {{table-caption caption=table.caption alignment=table.captionAlignment hideFromView=table.hideCaption}}
+      {{/if}}
       <thead>
         <tr>
           {{#each columns as |column|}}
