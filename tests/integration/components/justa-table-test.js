@@ -2,6 +2,7 @@ import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
 import Ember from 'ember';
+import getNode from 'dummy/tests/helpers/get-node';
 
 moduleForComponent('justa-table', 'Integration | Component | justa table', {
   integration: true
@@ -370,12 +371,16 @@ test('recalculates fixed column width', function(assert) {
 
     {{/justa-table}}
   `);
+
   return wait().then(() => {
+    const columnsElem = getNode(this).querySelector('.fixed-table-columns-wrapper');
+
     // this currently includes 1 px border from the appearance css. not ideal.
-    assert.equal(this.$('.fixed-table-columns-wrapper').width(), 151);
+    assert.equal(parseInt(window.getComputedStyle(columnsElem).width), 151);
     this.set('showState', true);
+
     return wait().then(() => {
-      assert.equal(this.$('.fixed-table-columns-wrapper').width(), 252);
+      assert.equal(parseInt(window.getComputedStyle(columnsElem).width), 252);
     });
   });
 });
