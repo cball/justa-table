@@ -1,24 +1,15 @@
-import Ember from 'ember';
-import { module, test } from 'qunit';
-import startApp from '../../tests/helpers/start-app';
-import $ from 'jquery';
+import { test } from 'qunit';
+import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
+import jQuery from 'jquery';
 
-module('Acceptance | table rerenders when rows change', {
-  beforeEach() {
-    this.application = startApp();
-  },
-
-  afterEach() {
-    Ember.run(this.application, 'destroy');
-  }
-});
+moduleForAcceptance('Acceptance | table rerenders when rows change');
 
 test('basic table properly re-renders when rows are removed', function(assert) {
   visit('/examples/basic-table');
 
   andThen(() => {
-    let rows = $('.table-columns tr').length;
-    let headers = $('.table-columns th').text().trim();
+    let rows = jQuery('.table-columns tr').length;
+    let headers = jQuery('.table-columns th').text().trim();
 
     assert.equal(rows, 101, 'should have 50 rows + header');
     assert.ok(headers.match(/name/i), 'should have name header');
@@ -28,8 +19,8 @@ test('basic table properly re-renders when rows are removed', function(assert) {
   click('a:contains(Remove some rows)');
 
   andThen(() => {
-    let rows = $('.table-columns tr').length;
-    let headers = $('.table-columns th').text().trim();
+    let rows = jQuery('.table-columns tr').length;
+    let headers = jQuery('.table-columns th').text().trim();
 
     assert.equal(rows, 46, 'should have 45 rows + header');
     assert.ok(headers.match(/name/i), 'still have name header');
@@ -41,8 +32,8 @@ test('basic table properly re-renders when columns are removed', function(assert
   visit('/examples/basic-table');
 
   andThen(() => {
-    let headerCount = $('.table-columns th').length;
-    let firstRowCellCount = $('.table-columns tr:nth-of-type(2) td').length;
+    let headerCount = jQuery('.table-columns th').length;
+    let firstRowCellCount = jQuery('.table-columns tr:nth-of-type(2) td').length;
     assert.equal(headerCount, 4);
     assert.equal(firstRowCellCount, 4);
   });
@@ -50,8 +41,8 @@ test('basic table properly re-renders when columns are removed', function(assert
   click('a:contains(Remove a dynamic column)');
 
   andThen(() => {
-    let headerCount = $('.table-columns th').length;
-    let firstRowCellCount = $('.table-columns tr:nth-of-type(2) td').length;
+    let headerCount = jQuery('.table-columns th').length;
+    let firstRowCellCount = jQuery('.table-columns tr:nth-of-type(2) td').length;
     assert.equal(headerCount, 3);
     assert.equal(firstRowCellCount, 3);
   });
@@ -72,7 +63,7 @@ test('basic table properly re-renders when columns are inserted', function(asser
 });
 
 function headerNames() {
-  return $('.table-columns th').map(function() {
-    return $(this).text().trim();
+  return jQuery('.table-columns th').map(function() {
+    return jQuery(this).text().trim();
   }).toArray();
 }

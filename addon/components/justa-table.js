@@ -34,7 +34,7 @@ export default Component.extend(InViewportMixin, {
   init() {
     this._super(...arguments);
     this.set('rowHeight', this.rowHeight || DEFAULT_ROW_HEIGHT);
-    this.set('_rowManagers', new A([]));
+    this.set('_rowManagers', A([]));
 
     let onLoadMoreRowsAction = this.getAttr('on-load-more-rows');
     if (!onLoadMoreRowsAction) {
@@ -425,8 +425,8 @@ export default Component.extend(InViewportMixin, {
   */
   fixedColumnWidth() {
     // TODO: register children explicitly and don't use child views.
-    let fixedColumnsComponent = this.get('childViews').find((view) => {
-      return view.classNames.contains('fixed-table-columns-wrapper');
+    let fixedColumnsComponent = this.get('childViews').find(view => {
+      return view.classNames.includes('fixed-table-columns-wrapper');
     });
 
     return fixedColumnsComponent ? fixedColumnsComponent.get('tableWidth') : 0;
@@ -437,9 +437,9 @@ export default Component.extend(InViewportMixin, {
       return;
     }
 
-    let rows = new A(get(this, 'content')).toArray();
+    let rows = A(get(this, 'content')).toArray();
     let rowGroupDataName = get(this, 'rowGroupDataName');
-    let formattedRows = new A();
+    let formattedRows = A();
 
     for (let i = 0; i < get(rows, 'length'); i++) {
       let row = rows[i];
@@ -450,7 +450,7 @@ export default Component.extend(InViewportMixin, {
         isCollapsed: collapsed
       });
 
-      let children = new A(get(row, rowGroupDataName));
+      let children = A(get(row, rowGroupDataName));
       children.setEach('parent', row);
 
       formattedRows.pushObject(row);

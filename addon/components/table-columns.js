@@ -7,7 +7,8 @@ const {
   getWithDefault,
   computed,
   computed: { readOnly },
-  run
+  run,
+  String: { htmlSafe }
 } = Ember;
 
 const DEFAULT_ROW_HEIGHT = 37;
@@ -46,8 +47,9 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.classNames.pushObject(`${this.columnType}-table-columns-wrapper`);
-    this._allColumns = new A();
+
+    this.classNames.push(`${this.columnType}-table-columns-wrapper`);
+    this._allColumns = A();
   },
 
   /**
@@ -91,7 +93,7 @@ export default Ember.Component.extend({
     let tableClasses = this.get('table.rowClasses');
     let rowClasses = this.get('rowClasses');
 
-    return new A([tableClasses, rowClasses]).compact().join(' ');
+    return A([tableClasses, rowClasses]).compact().join(' ');
   }),
 
   /**
@@ -102,7 +104,8 @@ export default Ember.Component.extend({
   rowHeight: computed('table.rowHeight', function() {
     let height = getWithDefault(this, 'table.rowHeight', DEFAULT_ROW_HEIGHT);
     height = height.toString().replace(/px/, '');
-    return new Ember.Handlebars.SafeString(`height: ${height}px`);
+
+    return htmlSafe(`height: ${height}px`);
   }),
 
   /**

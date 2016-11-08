@@ -8,6 +8,11 @@
 /node_modules
 /bower_components
 
+.vscode
+.vscodeignore
+/typings/*
+jsconfig.json
+
 # misc
 /.sass-cache
 /connect.lock
