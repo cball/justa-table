@@ -56,6 +56,7 @@
     "ember-cli-babel": "^5.1.6",
     "ember-cli-htmlbars": "^1.1.0",
     "ember-cli-sass": "^5.1.0",
+    "ember-cli-version-checker": "^1.2.0",
     "ember-in-viewport": "2.0.8",
     "ember-truth-helpers": "^1.0.0",
     "smoke-and-mirrors": "cball/smoke-and-mirrors#2c265a4"
