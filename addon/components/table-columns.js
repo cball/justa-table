@@ -16,6 +16,8 @@ const DEFAULT_ROW_HEIGHT = 37;
 export default Ember.Component.extend({
   layout,
   classNames: ['table-columns-wrapper'],
+  classNameBindings: ['columnTypeClass'],
+
   columnType: 'standard',
 
   /**
@@ -48,12 +50,11 @@ export default Ember.Component.extend({
   init() {
     this._super(...arguments);
 
-    this.classNames.push(`${this.columnType}-table-columns-wrapper`);
     this._allColumns = A();
   },
 
   /**
-    If the intiial width/position has been set after rendering.
+    If the initial width/position has been set after rendering.
     @public
   */
   widthAndPositionSet: false,
@@ -73,6 +74,16 @@ export default Ember.Component.extend({
       let style = getComputedStyle(column.element);
       return parseInt(style.borderRightWidth, 10) + parseInt(style.borderLeftWidth, 10);
     });
+  }),
+
+  /**
+   * A dynamic class name for this component's top-level columns
+   * wrapper -- based upon the `columnType`
+   */
+  columnTypeClass: computed('columnType', {
+    get() {
+      return `${this.get('columnType')}-table-columns-wrapper`;
+    }
   }),
 
   /**
