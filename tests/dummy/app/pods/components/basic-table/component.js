@@ -9,7 +9,8 @@ export default Ember.Component.extend({
 
   init() {
     this._super(...arguments);
-    this.dynamicColumns = [
+
+    this.dynamicColumns = Ember.A([
       {
         label: 'Dynamic 1',
         value: 'one',
@@ -20,13 +21,12 @@ export default Ember.Component.extend({
         value: 'two',
         width: 100
       }
-    ];
+    ]);
   },
 
   actions: {
     removeAColumn() {
-      let removed = this.get('dynamicColumns').slice(0, 1);
-      this.set('dynamicColumns', removed);
+      this.get('dynamicColumns').popObject();
     },
 
     removeSomeRows() {
@@ -34,21 +34,31 @@ export default Ember.Component.extend({
     },
 
     insertSomeColumns() {
-      let newColumns = new Ember.A();
-      let columns = this.get('dynamicColumns');
+      let dynamicColumns = this.get('dynamicColumns');
 
-      columns.forEach((c) => {
-        let newColumn = {
-          label: `New ${c.label}`,
-          value: c.value,
-          width: 200
-        };
+      if (!dynamicColumns.length) {
+        dynamicColumns.addObject({
+          label: 'Dynamic 1',
+          value: 'one',
+          width: 250
+        });
+      } else {
 
-        newColumns.addObject(c);
-        newColumns.addObject(newColumn);
-      });
+        let newColumns = Ember.A();
 
-      this.set('dynamicColumns', newColumns);
+        dynamicColumns.forEach(c => {
+          let newColumn = {
+            label: `New ${c.label}`,
+            value: c.value,
+            width: 200
+          };
+
+          newColumns.addObject(c);
+          newColumns.addObject(newColumn);
+        });
+
+        this.set('dynamicColumns', newColumns);
+      }
     },
 
     toggleCaption() {
