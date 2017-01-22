@@ -1,6 +1,12 @@
-# Ember Justa Table [![Build Status](https://travis-ci.org/cball/justa-table.svg?branch=master)](https://travis-ci.org/cball/justa-table)
+# Ember Justa Table
+_A Glimmer-compatible Ember Component that renders HTML tables._
 
-This README outlines the details of collaborating on this Ember addon.
+[![Latest NPM release][npm-badge]][npm-badge-url]
+[![CircleCI Build Status][circle-badge]][circle-badge-url]
+[![Ember Observer Score][ember-observer-badge]][ember-observer-badge-url]
+[![License][license-badge]][license-badge-url]
+[![Dependencies][dependencies-badge]][dependencies-badge-url]
+[![Dev Dependencies][devDependencies-badge]][devDependencies-badge-url]
 
 ## Including In An Ember Application
 
@@ -45,3 +51,18 @@ THIS IS NOT READY FOR USE JUST YET...
 * `ember build`
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+
+
+
+[npm-badge]: https://img.shields.io/npm/v/justa-table.svg
+[npm-badge-url]: https://www.npmjs.com/package/justa-table
+[circle-badge]: https://circleci.com/gh/cball/justa-table/tree/master.svg?style=svg&circle-token={{CIRCLE_TOKEN}}
+[circle-badge-url]: https://circleci.com/gh/cball/justa-table/tree/master
+[ember-observer-badge]: http://emberobserver.com/badges/justa-table.svg
+[ember-observer-badge-url]: http://emberobserver.com/addons/justa-table
+[license-badge]: https://img.shields.io/npm/l/justa-table.svg
+[license-badge-url]: LICENSE.md
+[dependencies-badge]: https://img.shields.io/david/cball/justa-table.svg
+[dependencies-badge-url]: https://david-dm.org/cball/justa-table
+[devDependencies-badge]: https://img.shields.io/david/dev/cball/justa-table.svg
+[devDependencies-badge-url]: https://david-dm.org/cball/justa-table#info=devDependencies
