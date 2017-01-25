@@ -24,6 +24,18 @@ const HORIZONTAL_SCROLLBAR_HEIGHT = 16;
 const DEFAULT_ROW_HEIGHT = 37;
 const DEFAULT_OFFSCREEN_CONTENT_BUFFER_SIZE = 0.5;
 
+// TODO: this should probably go in its own class somewhere
+// I separated this into a function becuase its used multiple times
+let collapseRowGroup = function(rowGroup) {
+  let collapsed = get(rowGroup, 'isCollapsed');
+
+  if (Ember.isNone(collapsed)) {
+    set(rowGroup, 'isCollapsed', false);
+  } else {
+    set(rowGroup, 'isCollapsed', !rowGroup.isCollapsed);
+  }
+};
+
 export default Component.extend(InViewportMixin, {
   layout,
   classNames: ['justa-table'],
@@ -490,14 +502,26 @@ export default Component.extend(InViewportMixin, {
       let object = get(this, 'content').find((item) => {
         return item === rowGroup;
       });
+
       let objectCollapsed = get(object, 'isCollapsed');
 
-      if (Ember.isNone(objectCollapsed)) {
-        set(object, 'isCollapsed', false);
-      } else {
-        set(object, 'isCollapsed', !objectCollapsed);
+      // TODO: Separate this logic out somehow, this closes all open
+      // groups when you open another. for accordian grouping...
+      let isAccordian = get(this, 'accordian');
+
+      // NOTE: if accordian is passed to the table as true. close all other
+      // groups when opening another one.
+      if (isAccordian) {
+        object.filter(function(item) {
+          return !item.isCollapsed;
+        }).forEach((row) => {
+          if (row.label !== rowGroup.label) {
+            collapseRowGroup(row);
+          }
+        });
       }
 
+      collapseRowGroup(objectCollapsed);
       // TODO make this smarter by taking option if we should do this
       isCollapsed = get(object, 'isCollapsed');
       let rowData = get(object, this.get('rowGroupDataName'));
