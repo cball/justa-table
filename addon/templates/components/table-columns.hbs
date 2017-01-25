@@ -28,9 +28,23 @@
           {{#if row.label}}
             <td colspan={{columns.length}} class="table-cell">
               {{row.label}}
+              <!--
+                TODO: This is messy, but is necessary to render headers
+                for rows that are collapsable. NEEDS TO BE FIXED
+              -->
+              <div style="display:none;">
+                {{yield row}}
+              </div>
             </td>
           {{else if (or row.isParent (not row.parent.IsCollapsed))}}
             {{yield row}}
+              <!--
+                TODO: This is messy, but is necessary to render headers
+                for rows that are collapsable. NEEDS TO BE FIXED
+              -->
+              <div style="display:none;">
+                {{yield row}}
+              </div>
           {{/if}}
         {{/collapsable-table-rows}}
       {{else}}

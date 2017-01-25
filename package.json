@@ -1,6 +1,6 @@
 {
   "name": "justa-table",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A Glimmer-compatible Ember Component that renders HTML tables.",
   "directories": {
     "doc": "doc",
